@@ -63,7 +63,7 @@ void Application::Update() {
 	Physics::Update();
 	CameraSystem::Update(*activeScene);
 	Renderer::RenderScene(*activeScene);
-	//Editor::Update();
+	Editor::Update();
 	Renderer::EndFrame(window);
 	
 	if (glfwWindowShouldClose(window)) {

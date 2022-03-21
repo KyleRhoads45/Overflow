@@ -1,9 +1,22 @@
 #include "../Components/Components.h"
 #include "../Renderer/Renderer.h"
 #include "../Core/Scene.h"
+#include "../Core/Input.h"
 #include "Editor.h"
 
+bool Editor::showGizmos = false;
+
 void Editor::Update() {
+	if (OnKeyHold(GLFW_KEY_G)) {
+		showGizmos = true;
+	}
+
+	if (OnKeyHold(GLFW_KEY_H)) {
+		showGizmos = false;
+	}
+
+	if (!showGizmos) return;
+
 	RenderAllGizmos();
 }
 

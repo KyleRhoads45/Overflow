@@ -10,5 +10,7 @@ private:
 
 	static void RenderAllGizmos();
 
+	static bool showGizmos;
+
 };
 
