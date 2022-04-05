@@ -33,8 +33,9 @@ Application::Application() {
 		std::cout << "Failed to load Opengl function pointers\n";
 	}
 
-	Renderer::Init();
 	InputInit(window);
+	RendererInit();
+	Editor::Start(window);
 	SceneCreateAndBind();
 
 	const entt::entity camEntity = CreateEntity(glm::vec3(0, 0, 10));
@@ -50,6 +51,11 @@ Application::Application() {
 	}
 }
 
+bool Application::AddScript(void(*updatePtr)(float)) {
+	std::cout << "Added Script\n";
+	return true;
+}
+
 void Application::Update() {
 	glfwPollEvents();
 	
@@ -62,9 +68,9 @@ void Application::Update() {
 	Saws::Update(deltaTime);
 	Physics::Update();
 	CameraSystem::Update(*activeScene);
-	Renderer::RenderScene(*activeScene);
-	Editor::Update();
-	Renderer::EndFrame(window);
+	RendererRenderScene(*activeScene);
+	Editor::Update(window);
+	RendererEndFrame(window);
 	
 	if (glfwWindowShouldClose(window)) {
 		Exit();

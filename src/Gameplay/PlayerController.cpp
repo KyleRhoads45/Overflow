@@ -2,6 +2,7 @@
 #include "../Core/Scene.h"
 #include "../Core/Math.h"
 #include "../Components/Components.h"
+#include "../Core/Application.h"
 #include "PlayerController.h"
 
 static Transform* trans;
@@ -50,6 +51,11 @@ void PlayerStart() {
 
     Animation fallAnim(Texture::GetTexture("src/Assets/Sprites/PlayerJump.png"), 10.0f, 32, 32, 1, 5);
     animController->animations.push_back(fallAnim);
+}
+
+REGISTER_UPDATE
+void Update(float deltaTime) {
+
 }
 
 void PlayerUpdate(const float deltaTime) {

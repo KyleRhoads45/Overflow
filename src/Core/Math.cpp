@@ -1,8 +1,8 @@
 #include "Math.h"
 
-glm::vec3 Vec3Lerp(const glm::vec3& a, const glm::vec3& b, float t) {
-	t = glm::clamp(t, 0.0f, 1.0f);
-	return glm::vec3(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t);
+glm::vec3 Vec3Lerp(const glm::vec3& a, const glm::vec3& b, const float t) {
+	float tClamped = glm::clamp(t, 0.0f, 1.0f);
+	return glm::vec3(a.x + (b.x - a.x) * tClamped, a.y + (b.y - a.y) * tClamped, a.z + (b.z - a.z) * tClamped);
 }
 
 float Vec3Distance(const glm::vec3& a, const glm::vec3& b) {

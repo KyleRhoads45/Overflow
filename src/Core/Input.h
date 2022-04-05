@@ -3,3 +3,4 @@
 
 void InputInit(GLFWwindow* window);
 bool OnKeyHold(int key);
+bool OnMousePress(const int key);

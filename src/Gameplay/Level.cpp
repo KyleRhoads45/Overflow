@@ -10,6 +10,13 @@ void Level::Start() {
 	Texture tex = Texture::GetTexture("src/Assets/Sprites/FarBG.png");
 	bgsr.SetTexture(tex);
 
+	entt::entity tileEntity = CreateEntity(glm::vec3(0.0f, 0.0f, 0.0f));
+	AddComponent<StaticBox>(tileEntity).Init(0.32f, 0.32f);
+	Sprite& sr = AddComponent<Sprite>(tileEntity);
+	Texture tileTexture = Texture::GetTexture("src/Assets/Sprites/1_Industrial_Tileset_1.png");
+	sr.SubTexture(tileTexture, glm::vec2(144, 80), 32, 32);
+
+	return;
 	//Ground
 	for (int i = 0; i < 25; i++) {
 		entt::entity tileEntity = CreateEntity(glm::vec3(-3.9f + (0.32 * i), -2.0f, 0.0f));

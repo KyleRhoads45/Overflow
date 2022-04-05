@@ -12,13 +12,13 @@ static const int MaxQuadCount = 1000;
 static const int MaxVertCount = MaxQuadCount * 4;
 static const int MaxIndexCount = MaxQuadCount * 6;
 
-struct RenderBuffer {
+static struct RenderBuffer {
 	unsigned int vao;
 	unsigned int vbo;
 	unsigned int ebo;
 	int curQuadSize = 0;
 
-	Vertex* vertPtr;
+	int vertIndex = 0;
 	Vertex verts[MaxVertCount];
 
 	int texIndex = 0;
@@ -29,10 +29,13 @@ static std::unique_ptr<Shader> standardShader;
 static std::unique_ptr<Shader> gizmosShader;
 static RenderBuffer renderBuffer;
 
-unsigned int Renderer::gizmosVao;
-unsigned int Renderer::gizmosVbo;
+unsigned int gizmosVao;
+unsigned int gizmosVbo;
 
-void Renderer::Init() {
+static void DrawSprite(const Transform& trans, const Sprite& sprite);
+static void FlushRenderBuffer();
+
+void RendererInit() {
 	glEnable(GL_CULL_FACE);
 	glDisable(GL_MULTISAMPLE);
 
@@ -49,7 +52,7 @@ void Renderer::Init() {
 	//Render buffer
 	renderBuffer.curQuadSize = 0;
 	renderBuffer.texIndex = 0;
-	renderBuffer.vertPtr = renderBuffer.verts;
+	renderBuffer.vertIndex = 0;
 
 	glGenVertexArrays(1, &renderBuffer.vao);
 	glBindVertexArray(renderBuffer.vao);
@@ -104,25 +107,28 @@ void Renderer::Init() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void Renderer::RenderScene(Scene& scene) {
+void RendererRenderScene(Scene& scene) {
 	glEnable(GL_DEPTH_TEST);
 	glUseProgram(standardShader->id);
 
 	const auto& renderView = scene.registry.view<Transform, Sprite>();
 	for (const auto& [entity, trans, sprite] : renderView.each()) {
 		DrawSprite(trans, sprite);
+		if (renderBuffer.curQuadSize >= MaxQuadCount) {
+			FlushRenderBuffer();
+		}
 	}
 
 	FlushRenderBuffer();
 }
 
-void Renderer::EndFrame(GLFWwindow* window) {
+void RendererEndFrame(GLFWwindow* window) {
 	glfwSwapBuffers(window);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(1, 1, 1, 1);
 }
 
-void Renderer::DebugDrawRect(const glm::vec2& pos, const float width, const float height) {
+void RendererDebugDrawRect(const glm::vec2& pos, const float width, const float height) {
 	glDisable(GL_DEPTH_TEST);
 	glUseProgram(gizmosShader->id);
 
@@ -146,7 +152,7 @@ void Renderer::DebugDrawRect(const glm::vec2& pos, const float width, const floa
 	glDrawArrays(GL_LINE_LOOP, 0, 4);
 }
 
-void Renderer::DebugDrawCircle(const glm::vec2& pos, const float radius) {
+void RendererDebugDrawCircle(const glm::vec2& pos, const float radius) {
 	glDisable(GL_DEPTH_TEST);
 	glUseProgram(gizmosShader->id);
 
@@ -174,7 +180,7 @@ void Renderer::DebugDrawCircle(const glm::vec2& pos, const float radius) {
 	glDrawArrays(GL_LINE_LOOP, 0, circleVertCount);
 }
 
-void Renderer::DrawSprite(const Transform& trans, const Sprite& sprite) {
+static void DrawSprite(const Transform& trans, const Sprite& sprite) {
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, trans.position);
 	model = glm::scale(model, trans.scale);
@@ -209,14 +215,14 @@ void Renderer::DrawSprite(const Transform& trans, const Sprite& sprite) {
 		worldVert.texCoord = sprite.verts[i].texCoord;
 		worldVert.textureIndex = vertTexIndex;
 
-		*renderBuffer.vertPtr = worldVert;
-		renderBuffer.vertPtr++;
+		renderBuffer.verts[renderBuffer.vertIndex] = worldVert;
+		renderBuffer.vertIndex++;
 	}
 
 	renderBuffer.curQuadSize++;
 }
 
-void Renderer::FlushRenderBuffer() {
+static void FlushRenderBuffer() {
 	glBindVertexArray(renderBuffer.vao);
 
 	glBindBuffer(GL_ARRAY_BUFFER, renderBuffer.vbo);
@@ -230,5 +236,5 @@ void Renderer::FlushRenderBuffer() {
 
 	renderBuffer.curQuadSize = 0;
 	renderBuffer.texIndex = 0;
-	renderBuffer.vertPtr = renderBuffer.verts;
+	renderBuffer.vertIndex = 0;
 }
