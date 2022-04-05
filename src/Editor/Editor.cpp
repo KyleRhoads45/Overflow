@@ -13,15 +13,16 @@
 #include "../Core/Prefabs.h"
 #include "Editor.h"
 #include <iostream>
-#include <string>
 
-bool Editor::showGizmos = false;
+static bool showGizmos;
 static int selectedPrefabId = 0;
 
 static void DrawPrefabWindow();
 static void PlacePrefab(GLFWwindow* window);
+static void SetTheme(); 
+static void RenderAllGizmos();
 
-void Editor::Start(GLFWwindow* window) {
+void EditorInit(GLFWwindow* window) {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 
@@ -36,7 +37,7 @@ void Editor::Start(GLFWwindow* window) {
 	SetTheme();
 }
 
-void Editor::Update(GLFWwindow* window) {
+void EditorUpdate(GLFWwindow* window) {
 	if (OnKeyHold(GLFW_KEY_G)) {
 		showGizmos = true;
 	}
@@ -114,7 +115,7 @@ void PlacePrefab(GLFWwindow* window) {
 	Prefabs::PlacePrefab(selectedPrefabId, glm::vec3(snappedX, snappedY, 0));
 }
 
-void Editor::SetTheme() {
+void SetTheme() {
 	auto& style = ImGui::GetStyle();
 	style.ChildRounding = 0;
 	style.GrabRounding = 0;
@@ -179,7 +180,7 @@ void Editor::SetTheme() {
 	colors[ImGuiCol_ModalWindowDimBg] = { 0.11f, 0.13f, 0.13f, 0.35f };
 }
 
-void Editor::RenderAllGizmos() {
+void RenderAllGizmos() {
 	const auto& dynamicBoxView = activeScene->registry.view<Transform, DynamicBox>();
 	for (const auto& [entity, trans, box] : dynamicBoxView.each()) {
 		RendererDebugDrawRect(trans.position, box.width, box.height);
