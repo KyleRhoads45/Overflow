@@ -6,11 +6,13 @@ struct Scene {
 	entt::registry registry;
 };
 
-inline std::unique_ptr<Scene> activeScene = nullptr;
+inline std::shared_ptr<Scene> activeScene = nullptr;
 
 entt::entity CreateEntity();
 entt::entity CreateEntity(const glm::vec3& pos);
 void SceneCreateAndBind();
+void SaveScene(std::shared_ptr<Scene> scene);
+void LoadScene();
 
 template<typename Component>
 Component& AddComponent(const entt::entity& entity) {

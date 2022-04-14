@@ -53,6 +53,12 @@ void Editor::Update(GLFWwindow* window) {
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
+	ImGui::BeginMainMenuBar();
+	if (ImGui::Button("Save")) {
+		SaveScene(activeScene);
+	}
+	ImGui::EndMainMenuBar();
+
 	DrawPrefabWindow();
 
 	ImGuiIO& io = ImGui::GetIO();

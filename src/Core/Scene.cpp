@@ -1,3 +1,4 @@
+#include <fstream>
 #include "../Components/Components.h"
 #include "Scene.h"
 
@@ -20,5 +21,17 @@ entt::entity CreateEntity(const glm::vec3& pos) {
 }
 
 void SceneCreateAndBind() {
-	activeScene = std::make_unique<Scene>();	
+	activeScene = std::make_shared<Scene>();	
+}
+
+void SaveScene(std::shared_ptr<Scene> scene) {
+	std::ofstream output;
+	output.open("src/Assets/Scenes/TestScene", std::ios::out | std::ios::binary);
+
+	char string[] = "Is this working";
+	output.write("Is this working", sizeof(string));
+}
+
+void LoadScene() {
+
 }
