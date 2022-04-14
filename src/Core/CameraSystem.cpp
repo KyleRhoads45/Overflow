@@ -1,10 +1,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "../Components/Components.h"
 #include "CameraSystem.h"
+#include "Scene.h"
 #include <iostream>
 
-void CameraSystem::Update(Scene& scene) {
-	const auto& cameraView = scene.registry.view<Transform, Camera>();
+void CameraSystemUpdate() {
+	const auto& cameraView = activeScene->registry.view<Transform, Camera>();
 	for (const auto entity : cameraView) {
 		Transform& trans = cameraView.get<Transform>(entity);
 		Camera& cam = cameraView.get<Camera>(entity);

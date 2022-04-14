@@ -66,8 +66,8 @@ void Application::Update() {
 	AnimationUpdate(deltaTime);
 	PlayerUpdate(deltaTime);
 	Saws::Update(deltaTime);
-	Physics::Update();
-	CameraSystem::Update(*activeScene);
+	PhysicsUpdate();
+	CameraSystemUpdate();
 	RendererRenderScene(*activeScene);
 	EditorUpdate(window);
 	RendererEndFrame(window);

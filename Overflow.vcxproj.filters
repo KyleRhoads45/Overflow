@@ -1070,6 +1070,9 @@
     <ClInclude Include="src\Core\Prefabs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Components\PrefabId.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Assets\Shaders\Standard.frag" />

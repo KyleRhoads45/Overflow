@@ -4,7 +4,10 @@
 #include "Physics.h"
 #include <iostream>
 
-void Physics::Update() {
+static void PerformAABB(Transform& trans, DynamicBox& boxShape);
+static bool PerformCircleTrigger(Transform& trans, DynamicCircle& circle);
+
+void PhysicsUpdate() {
 	const auto& dynamicBoxView = GetView<Transform, DynamicBox>();
 	for (auto entity : dynamicBoxView) {
 		auto& trans = dynamicBoxView.get<Transform>(entity);
@@ -55,7 +58,7 @@ void Physics::Update() {
 	}
 }
 
-void Physics::PerformAABB(Transform& trans, DynamicBox& dynamicBox) {
+void PerformAABB(Transform& trans, DynamicBox& dynamicBox) {
 	const auto& otheBoxShapes = GetView<Transform, StaticBox>();
 	for (auto& otherEntity : otheBoxShapes) {
 		auto& otherTrans = otheBoxShapes.get<Transform>(otherEntity);
@@ -100,7 +103,7 @@ void Physics::PerformAABB(Transform& trans, DynamicBox& dynamicBox) {
 	}
 }
 
-bool Physics::PerformCircleTrigger(Transform& trans, DynamicCircle& circle) {
+bool PerformCircleTrigger(Transform& trans, DynamicCircle& circle) {
 	const auto& triggers = GetView<Transform, TriggerCircle>();
 	for (auto& otherEntity : triggers) {
 		auto& otherTrans = triggers.get<Transform>(otherEntity);
