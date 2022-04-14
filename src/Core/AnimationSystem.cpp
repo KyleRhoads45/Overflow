@@ -2,7 +2,7 @@
 #include "AnimationSystem.h"
 #include <iostream>
 
-void AnimationSystem::Update(const float deltaTime) {
+void AnimationUpdate(const float deltaTime) {
 	const auto& animView = GetView<Sprite, AnimationController>();
 
 	for (auto entity : animView) {

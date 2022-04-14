@@ -35,7 +35,7 @@ Application::Application() {
 
 	InputInit(window);
 	RendererInit();
-	Editor::Start(window);
+	EditorInit(window);
 	SceneCreateAndBind();
 
 	const entt::entity camEntity = CreateEntity(glm::vec3(0, 0, 10));
@@ -63,13 +63,13 @@ void Application::Update() {
 	std::string windowTitle = "Overflow " + std::to_string((int)(1.0 / deltaTime)) + "fps";
 	glfwSetWindowTitle(window, windowTitle.c_str());
 
-	AnimationSystem::Update(deltaTime);
+	AnimationUpdate(deltaTime);
 	PlayerUpdate(deltaTime);
 	Saws::Update(deltaTime);
 	Physics::Update();
 	CameraSystem::Update(*activeScene);
 	RendererRenderScene(*activeScene);
-	Editor::Update(window);
+	EditorUpdate(window);
 	RendererEndFrame(window);
 	
 	if (glfwWindowShouldClose(window)) {
