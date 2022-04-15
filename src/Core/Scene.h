@@ -4,28 +4,29 @@
 
 struct Scene {
 	entt::registry registry;
+	std::string name;
 };
 
-inline std::shared_ptr<Scene> activeScene = nullptr;
+inline Scene activeScene;
 
 entt::entity CreateEntity();
 entt::entity CreateEntity(const glm::vec3& pos);
-void SceneCreateAndBind();
-void SaveScene(std::shared_ptr<Scene> scene);
-void LoadScene();
+void CreateScene(const std::string& sceneName);
+void SaveScene();
+void LoadScene(const std::string& sceneName);
 
 template<typename Component>
 Component& AddComponent(const entt::entity& entity) {
-	return activeScene->registry.emplace<Component>(entity);
+	return activeScene.registry.emplace<Component>(entity);
 }
 
 template<typename Component>
 Component& GetComponent(const entt::entity& entity) {
-	return activeScene->registry.get<Component>(entity);
+	return activeScene.registry.get<Component>(entity);
 }
 
 template<typename ...Component>
 auto GetView() {
-	return activeScene->registry.view<Component...>();
+	return activeScene.registry.view<Component...>();
 }
 

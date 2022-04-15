@@ -1,11 +1,5 @@
 #pragma once
 
-class Saws {
+void SawsUpdate(const float deltaTime);
 
-public:
-
-	static void Start();
-	static void Update(const float deltaTime);
-
-};
 

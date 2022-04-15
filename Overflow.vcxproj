@@ -156,7 +156,6 @@
     <ClCompile Include="include\imgui\imgui_tables.cpp" />
     <ClCompile Include="include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Core\Prefabs.cpp" />
-    <ClCompile Include="src\Gameplay\Level.cpp" />
     <ClCompile Include="src\Editor\Editor.cpp" />
     <ClCompile Include="src\Gameplay\Saws.cpp" />
     <ClCompile Include="src\Core\CameraSystem.cpp" />
@@ -475,7 +474,6 @@
     <ClInclude Include="include\KHR\khrplatform.h" />
     <ClInclude Include="src\Components\PrefabId.h" />
     <ClInclude Include="src\Core\Prefabs.h" />
-    <ClInclude Include="src\Gameplay\Level.h" />
     <ClInclude Include="src\Editor\Editor.h" />
     <ClInclude Include="src\Components\DynamicCircle.h" />
     <ClInclude Include="src\Gameplay\Saws.h" />

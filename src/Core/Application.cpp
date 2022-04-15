@@ -10,7 +10,6 @@
 #include "../Renderer/Texture.h"
 #include "../Gameplay/PlayerController.h"
 #include "../Gameplay/Saws.h"
-#include "../Gameplay/Level.h"
 #include "Application.h"
 
 Application::Application() {
@@ -36,24 +35,16 @@ Application::Application() {
 	InputInit(window);
 	RendererInit();
 	EditorInit(window);
-	SceneCreateAndBind();
 
 	const entt::entity camEntity = CreateEntity(glm::vec3(0, 0, 10));
 	Camera& cam = AddComponent<Camera>(camEntity);
 	Camera::SetOrtho(cam, 1920, 1080);
 
-	Saws::Start();
-	Level::Start();
-	PlayerStart();
+	//PlayerStart();
 	
 	while (true) {
 		Update();
 	}
-}
-
-bool Application::AddScript(void(*updatePtr)(float)) {
-	std::cout << "Added Script\n";
-	return true;
 }
 
 void Application::Update() {
@@ -64,11 +55,11 @@ void Application::Update() {
 	glfwSetWindowTitle(window, windowTitle.c_str());
 
 	AnimationUpdate(deltaTime);
-	PlayerUpdate(deltaTime);
-	Saws::Update(deltaTime);
+	//PlayerUpdate(deltaTime);
+	SawsUpdate(deltaTime);
 	PhysicsUpdate();
 	CameraSystemUpdate();
-	RendererRenderScene(*activeScene);
+	RendererRenderScene(activeScene);
 	EditorUpdate(window);
 	RendererEndFrame(window);
 	

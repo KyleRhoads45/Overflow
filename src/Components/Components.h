@@ -7,3 +7,4 @@
 #include "DynamicCircle.h"
 #include "TriggerCircle.h"
 #include "AnimationController.h"
+#include "PrefabId.h"

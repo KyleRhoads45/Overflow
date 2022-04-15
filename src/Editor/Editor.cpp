@@ -13,11 +13,20 @@
 #include "../Core/Prefabs.h"
 #include "Editor.h"
 #include <iostream>
+#include <filesystem>
 
-static bool showGizmos;
+#define C_ARRAY_SIZE(_ARR) ((int)(sizeof(_ARR) / sizeof(*(_ARR))))
+
+static bool showGizmos = false;
+static bool showCreateSceneWindow = false;
+static bool showLoadSceneWindow = false;
+static bool showPrefabWindow = false;
 static int selectedPrefabId = 0;
 
+static void DrawMenuBar();
 static void DrawPrefabWindow();
+static void DrawCreateSceneWindow();
+static void DrawLoadSceneWindow();
 static void PlacePrefab(GLFWwindow* window);
 static void SetTheme(); 
 static void RenderAllGizmos();
@@ -54,12 +63,10 @@ void EditorUpdate(GLFWwindow* window) {
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	ImGui::BeginMainMenuBar();
-	if (ImGui::Button("Save")) {
-		SaveScene(activeScene);
-	}
-	ImGui::EndMainMenuBar();
 
+	DrawMenuBar();
+	DrawCreateSceneWindow();
+	DrawLoadSceneWindow();
 	DrawPrefabWindow();
 
 	ImGuiIO& io = ImGui::GetIO();
@@ -71,23 +78,86 @@ void EditorUpdate(GLFWwindow* window) {
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-//PushID is needed because ImGUI uses textureId for the button Id.
-//Since we use texture atlasing, textureId can be the same for many buttons.
+void DrawMenuBar() {
+	ImGui::BeginMainMenuBar();
+	if (ImGui::Button("Save")) {
+		SaveScene();
+	}
+	if (ImGui::Button("Create New Scene")) {
+		showCreateSceneWindow = true;
+	}
+	if (ImGui::Button("Load Scene")) {
+		showLoadSceneWindow = true;
+	}
+	if (ImGui::Button("Prefabs")) {
+		showPrefabWindow = true;
+	}
+	ImGui::Text(activeScene.name.c_str());
+	ImGui::EndMainMenuBar();
+}
+
 void DrawPrefabWindow() {
-	ImGui::Begin("Prefabs");
+	if (!showPrefabWindow) return;
+
+	ImGui::Begin("Prefabs", &showPrefabWindow);
+
 	for (int i = 0; i < 24; i++) {
+		//PushID is needed because ImGUI uses textureId for the button Id.
+		//Since we use texture atlasing, textureId can be the same for many buttons.
 		ImGui::PushID(i); 
-		IconData data = Prefabs::GetPrefabIcon(i);
+
+		IconData data = GetPrefabIcon(i);
 		if (ImGui::ImageButton(data.textureId, ImVec2(60, 60), data.uvMin, data.uvMax)) {
 			selectedPrefabId = i;
 		}
+
 		ImGui::PopID();
 	}
+
+	ImGui::End();
+}
+
+void DrawCreateSceneWindow() {
+	if (!showCreateSceneWindow) return;
+
+	ImGui::Begin("New Scene", &showCreateSceneWindow);
+
+	static char sceneName[30];
+	ImGui::InputText("Name", sceneName, C_ARRAY_SIZE(sceneName));
+
+	if (ImGui::Button("Cancel")) {
+		showCreateSceneWindow = false;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("Create")) {
+		CreateScene(sceneName);
+		showCreateSceneWindow = false;
+	}
+
+	ImGui::End();
+}
+
+void DrawLoadSceneWindow() {
+	if (!showLoadSceneWindow) return;
+
+	ImGui::Begin("Load Scene", &showLoadSceneWindow);
+
+	std::string scenePath = "src/Assets/Scenes";
+	for (const auto& sceneFile : std::filesystem::directory_iterator(scenePath)) {
+		const std::string sceneName = sceneFile.path().filename().string();
+		if (ImGui::Button(sceneName.c_str())) {
+			LoadScene(sceneName);
+			showLoadSceneWindow = false;
+		}
+	}
+
 	ImGui::End();
 }
 
 void PlacePrefab(GLFWwindow* window) {
-	if (!OnMousePress(GLFW_MOUSE_BUTTON_1)) return;
+	if (!showPrefabWindow || !OnMousePress(GLFW_MOUSE_BUTTON_1)) return;
 
 	double xpos, ypos;
 	glfwGetCursorPos(window, &xpos, &ypos);
@@ -118,7 +188,7 @@ void PlacePrefab(GLFWwindow* window) {
 	float snappedX = selectedX * gridSize;
 	float snappedY = selectedY * gridSize;
 
-	Prefabs::PlacePrefab(selectedPrefabId, glm::vec3(snappedX, snappedY, 0));
+	PlacePrefab(selectedPrefabId, glm::vec3(snappedX, snappedY, 0));
 }
 
 void SetTheme() {
@@ -187,22 +257,22 @@ void SetTheme() {
 }
 
 void RenderAllGizmos() {
-	const auto& dynamicBoxView = activeScene->registry.view<Transform, DynamicBox>();
+	const auto& dynamicBoxView = GetView<Transform, DynamicBox>();
 	for (const auto& [entity, trans, box] : dynamicBoxView.each()) {
 		RendererDebugDrawRect(trans.position, box.width, box.height);
 	}
 
-	const auto& staticBoxView = activeScene->registry.view<Transform, StaticBox>();
+	const auto& staticBoxView = GetView<Transform, StaticBox>();
 	for (const auto& [entity, trans, box] : staticBoxView.each()) {
 		RendererDebugDrawRect(trans.position, box.width, box.height);
 	}
 
-	const auto& dynamicCircleView = activeScene->registry.view<Transform, DynamicCircle>();
+	const auto& dynamicCircleView = GetView<Transform, DynamicCircle>();
 	for (const auto& [entity, trans, circle] : dynamicCircleView.each()) {
 		RendererDebugDrawCircle(trans.position, circle.radius);
 	}
 
-	const auto& triggerCircleView = activeScene->registry.view<Transform, TriggerCircle>();
+	const auto& triggerCircleView = GetView<Transform, TriggerCircle>();
 	for (const auto& [entity, trans, circle] : triggerCircleView.each()) {
 		RendererDebugDrawCircle(trans.position, circle.radius);
 	}

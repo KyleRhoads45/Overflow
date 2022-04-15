@@ -53,11 +53,6 @@ void PlayerStart() {
     animController->animations.push_back(fallAnim);
 }
 
-REGISTER_UPDATE
-void Update(float deltaTime) {
-
-}
-
 void PlayerUpdate(const float deltaTime) {
     float acc = (dynamicBox->downColliding) ? groundAcc : airAcc;
 

@@ -32,21 +32,24 @@ static glm::vec2 centers[] = {
 	glm::vec2(144, 112),
 	glm::vec2(176, 112)
 };
+	
+static void CreateStandardTile(const int prefabId, const entt::entity entity);
 
-void Prefabs::PlacePrefab(const int prefabId, const glm::vec3& pos) {
+void PlacePrefab(const int prefabId, const glm::vec3& pos) {
 	entt::entity entity = CreateEntity(pos);
-	CreateStandardTile(entity, centers[prefabId]);
+
+	const auto& serializeView = GetView<Transform, PrefabId>();
+	for (const auto& [entity, trans, prefabId] : serializeView.each()) {
+		if (trans.position == pos) {
+			activeScene.registry.destroy(entity);
+			break;
+		}
+	}
+	
+	CreateStandardTile(prefabId, entity);
 }
 
-void Prefabs::CreateStandardTile(const entt::entity entity, const glm::vec2& center) {
-	AddComponent<StaticBox>(entity).Init(0.32f, 0.32f);
-	Texture tileTexture = Texture::GetTexture("src/Assets/Sprites/1_Industrial_Tileset_1.png");
-	Sprite& sr = AddComponent<Sprite>(entity);
-	sr.SetTexture(tileTexture);
-	sr.SubTexture(tileTexture, center, 32, 32);
-}
-
-IconData Prefabs::GetPrefabIcon(const int prefabId) {
+IconData GetPrefabIcon(const int prefabId) {
 	IconData data;
 
 	Texture texture = Texture::GetTexture("src/Assets/Sprites/1_Industrial_Tileset_1.png");
@@ -76,4 +79,13 @@ IconData Prefabs::GetPrefabIcon(const int prefabId) {
 	data.uvMax = uvMax;
 	
 	return data;
+}
+
+void CreateStandardTile(const int prefabId, const entt::entity entity) {
+	AddComponent<PrefabId>(entity).id = prefabId;
+	AddComponent<StaticBox>(entity).Init(0.32f, 0.32f);
+	Texture tileTexture = Texture::GetTexture("src/Assets/Sprites/1_Industrial_Tileset_1.png");
+	Sprite& sr = AddComponent<Sprite>(entity);
+	sr.SetTexture(tileTexture);
+	sr.SubTexture(tileTexture, centers[prefabId], 32, 32);
 }
