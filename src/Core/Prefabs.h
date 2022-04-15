@@ -8,5 +8,6 @@ struct IconData {
 };
 
 void PlacePrefab(const int prefabId, const glm::vec3& pos);
+void ErasePrefab(const glm::vec3& pos);
 IconData GetPrefabIcon(const int prefabId);
 

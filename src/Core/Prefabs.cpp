@@ -37,7 +37,11 @@ static void CreateStandardTile(const int prefabId, const entt::entity entity);
 
 void PlacePrefab(const int prefabId, const glm::vec3& pos) {
 	entt::entity entity = CreateEntity(pos);
+	ErasePrefab(pos);
+	CreateStandardTile(prefabId, entity);
+}
 
+void ErasePrefab(const glm::vec3& pos) {
 	const auto& serializeView = GetView<Transform, PrefabId>();
 	for (const auto& [entity, trans, prefabId] : serializeView.each()) {
 		if (trans.position == pos) {
@@ -45,8 +49,6 @@ void PlacePrefab(const int prefabId, const glm::vec3& pos) {
 			break;
 		}
 	}
-	
-	CreateStandardTile(prefabId, entity);
 }
 
 IconData GetPrefabIcon(const int prefabId) {
