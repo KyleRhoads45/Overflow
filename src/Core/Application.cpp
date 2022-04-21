@@ -5,6 +5,7 @@
 #include "Physics.h"
 #include "AnimationSystem.h"
 #include "CameraSystem.h"
+#include "Prefabs.h"
 #include "../Editor/Editor.h"
 #include "../Renderer/Renderer.h"
 #include "../Renderer/Texture.h"
@@ -34,6 +35,7 @@ Application::Application() {
 
 	InputInit(window);
 	RendererInit();
+	PrefabsInit();
 	EditorInit(window);
 
 	const entt::entity camEntity = CreateEntity(glm::vec3(0, 0, 10));

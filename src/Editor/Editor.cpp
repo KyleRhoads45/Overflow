@@ -1,3 +1,6 @@
+#include <iostream>
+#include <filesystem>
+#include <string>
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include "imgui/imgui_impl_opengl3.h"
@@ -12,8 +15,6 @@
 #include "../Core/Input.h"
 #include "../Core/Prefabs.h"
 #include "Editor.h"
-#include <iostream>
-#include <filesystem>
 
 #define C_ARRAY_SIZE(_ARR) ((int)(sizeof(_ARR) / sizeof(*(_ARR))))
 
@@ -101,17 +102,24 @@ void DrawPrefabWindow() {
 
 	ImGui::Begin("Prefabs", &showPrefabWindow);
 
-	for (int i = 0; i < 24; i++) {
+	for (int i = 0; i < prefabCount; i++) {
+		ImGui::Text(std::to_string(i).c_str());
+
+		ImGui::SameLine();
+
 		//PushID is needed because ImGUI uses textureId for the button Id.
 		//Since we use texture atlasing, textureId can be the same for many buttons.
 		ImGui::PushID(i); 
-
 		IconData data = GetPrefabIcon(i);
 		if (ImGui::ImageButton(data.textureId, ImVec2(60, 60), data.uvMin, data.uvMax)) {
 			selectedPrefabId = i;
 		}
 
 		ImGui::PopID();
+
+		if ((i + 1) % 3 != 0) {
+			ImGui::SameLine();
+		}
 	}
 
 	ImGui::End();
@@ -264,7 +272,8 @@ void RenderAllGizmos() {
 
 	const auto& staticBoxView = GetView<Transform, StaticBox>();
 	for (const auto& [entity, trans, box] : staticBoxView.each()) {
-		RendererDebugDrawRect(trans.position, box.width, box.height);
+		glm::vec3 pos(trans.position.x + box.offset.x, trans.position.y + box.offset.y, trans.position.z);
+		RendererDebugDrawRect(pos, box.width, box.height);
 	}
 
 	const auto& dynamicCircleView = GetView<Transform, DynamicCircle>();

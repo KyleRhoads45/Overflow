@@ -1501,6 +1501,9 @@
     <Image Include="src\Assets\Sprites\Saws.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="src\Assets\Sprites\1_Industrial_Tileset_3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glfw3\glfw3.lib" />

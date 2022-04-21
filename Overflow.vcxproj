@@ -644,6 +644,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="src\Assets\Sprites\1_Industrial_Tileset_1.png" />
+    <Image Include="src\Assets\Sprites\1_Industrial_Tileset_3.png" />
     <Image Include="src\Assets\Sprites\FarBG.png" />
     <Image Include="src\Assets\Sprites\PlayerIdle.png" />
     <Image Include="src\Assets\Sprites\PlayerJump.png" />

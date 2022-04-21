@@ -7,6 +7,9 @@ struct IconData {
 	ImVec2 uvMax = ImVec2(1.0f, 1.0f);
 };
 
+inline int prefabCount = 0;
+
+void PrefabsInit();
 void PlacePrefab(const int prefabId, const glm::vec3& pos);
 IconData GetPrefabIcon(const int prefabId);
 

@@ -67,8 +67,9 @@ void PerformAABB(Transform& trans, DynamicBox& dynamicBox) {
 		glm::vec2 dynamicBoxBottomLeft = glm::vec2(dynamicBox.center.x - (dynamicBox.width / 2), dynamicBox.center.y - (dynamicBox.height / 2));
 		glm::vec2 dynamicBoxTopRight = glm::vec2(dynamicBox.center.x + (dynamicBox.width / 2), dynamicBox.center.y + (dynamicBox.height / 2));
 
-		glm::vec2 otherBoxBottomLeft = glm::vec2(otherTrans.position.x - (otherBox.width / 2), otherTrans.position.y - (otherBox.height / 2));
-		glm::vec2 otherBoxTopRight = glm::vec2(otherTrans.position.x + (otherBox.width / 2), otherTrans.position.y + (otherBox.height / 2));
+		glm::vec3 otherBoxPos(otherTrans.position.x + otherBox.offset.x, otherTrans.position.y + otherBox.offset.y, otherTrans.position.z);
+		glm::vec2 otherBoxBottomLeft = glm::vec2(otherBoxPos.x - (otherBox.width / 2), otherBoxPos.y - (otherBox.height / 2));
+		glm::vec2 otherBoxTopRight = glm::vec2(otherBoxPos.x + (otherBox.width / 2), otherBoxPos.y + (otherBox.height / 2));
 
 		bool above = dynamicBoxBottomLeft.y > otherBoxTopRight.y;
 		bool below = dynamicBoxTopRight.y < otherBoxBottomLeft.y;
