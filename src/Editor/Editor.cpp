@@ -22,6 +22,7 @@ static bool showGizmos = false;
 static bool showCreateSceneWindow = false;
 static bool showLoadSceneWindow = false;
 static bool showPrefabWindow = false;
+static bool erasePrefabSelected = false;
 static int selectedPrefabId = 0;
 
 static void DrawMenuBar();
@@ -113,6 +114,7 @@ void DrawPrefabWindow() {
 		IconData data = GetPrefabIcon(i);
 		if (ImGui::ImageButton(data.textureId, ImVec2(60, 60), data.uvMin, data.uvMax)) {
 			selectedPrefabId = i;
+			erasePrefabSelected = false;
 		}
 
 		ImGui::PopID();
@@ -196,7 +198,14 @@ void PlacePrefab(GLFWwindow* window) {
 	float snappedX = selectedX * gridSize;
 	float snappedY = selectedY * gridSize;
 
-	PlacePrefab(selectedPrefabId, glm::vec3(snappedX, snappedY, 0));
+	const glm::vec3 snappedPos(snappedX, snappedY, 0);
+
+	if (!erasePrefabSelected) {
+		PlacePrefab(selectedPrefabId, snappedPos);
+		return;
+	}
+
+	ErasePrefab(snappedPos);
 }
 
 void SetTheme() {

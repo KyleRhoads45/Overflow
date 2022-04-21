@@ -11,5 +11,6 @@ inline int prefabCount = 0;
 
 void PrefabsInit();
 void PlacePrefab(const int prefabId, const glm::vec3& pos);
+void ErasePrefab(const glm::vec3& pos);
 IconData GetPrefabIcon(const int prefabId);
 
