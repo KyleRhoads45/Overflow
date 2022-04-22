@@ -8,6 +8,8 @@ struct IconData {
 };
 
 inline int prefabCount = 0;
+const int playerPrefabId = 100;
+const int sawPrefabId = 101;
 
 void PrefabsInit();
 void PlacePrefab(const int prefabId, const glm::vec3& pos);

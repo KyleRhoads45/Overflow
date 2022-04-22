@@ -1,9 +1,9 @@
+#include <iostream>
 #include <vector>
 #include <entt/entt.hpp>
 #include "Scene.h"
 #include "../Components/Components.h"
 #include "Prefabs.h"
-#include <iostream>
 
 static std::vector<glm::vec2> tileSet1Centers;
 static std::vector<glm::vec2> tileSet2Centers;
@@ -12,6 +12,8 @@ static std::array<int, 5> supportBeamIds = { 25, 28, 31, 34, 37 };
 static std::array<int, 3> shortLeftPlatforms = { 26, 32, 35 };
 static std::array<int, 3> shortRightPlatforms = { 27, 29, 33 };
 
+static void PlacePlayer(const glm::vec3& pos);
+static void PlaceSaw(const glm::vec3& pos);
 static std::vector<glm::vec2> GenerateCenters(Texture& texture, int cellSize);
 static void CreateStandardTile(const int prefabId, const entt::entity entity);
 static Texture GetTextureFromPrefabId(const int prefabId);
@@ -30,6 +32,16 @@ void PrefabsInit() {
 
 
 void PlacePrefab(const int prefabId, const glm::vec3& pos) {
+	if (prefabId == playerPrefabId) {
+		PlacePlayer(glm::vec3(pos.x, pos.y, 1.0f));
+		return;
+	}
+
+	if (prefabId == sawPrefabId) {
+		PlaceSaw(glm::vec3(pos.x, pos.y, -1.0f));
+		return;
+	}
+
 	entt::entity entity = CreateEntity(pos);
 	ErasePrefab(pos);
 	CreateStandardTile(prefabId, entity);
@@ -77,6 +89,61 @@ IconData GetPrefabIcon(const int prefabId) {
 	return data;
 }
 
+static void PlacePlayer(const glm::vec3& pos) {
+	const auto& playerView = GetView<DynamicBox>();
+	if (playerView.size() != 0) {
+		auto& trans = GetComponent<Transform>(playerView[0]);
+		trans.position = pos;
+		return;
+	}
+
+	entt::entity playerEntity = CreateEntity(pos);
+	AddComponent<PrefabId>(playerEntity).id = playerPrefabId;
+
+    auto& trans = GetComponent<Transform>(playerEntity);
+
+    auto& dynamicBox = AddComponent<DynamicBox>(playerEntity);
+    dynamicBox.Init(0.15f, 0.3f, trans.position);
+
+    auto& dynamicCircle = AddComponent<DynamicCircle>(playerEntity);
+    dynamicCircle.radius = 0.12f;
+    
+    auto& sprite = AddComponent<Sprite>(playerEntity);
+    sprite.SetTexture(Texture::GetTexture("src/Assets/Sprites/PlayerIdle.png"));
+    sprite.SubTexture(Texture::GetTexture("src/Assets/Sprites/PlayerIdle.png"), glm::vec2(16, 80), 32, 32);
+
+    auto& animController = AddComponent<AnimationController>(playerEntity);
+    Animation idleAnim(Texture::GetTexture("src/Assets/Sprites/PlayerIdle.png"), 10.0f, 32, 32, 9, 0);
+    animController.animations.push_back(idleAnim);
+
+    Animation runAnim(Texture::GetTexture("src/Assets/Sprites/PlayerRun.png"), 20.0f, 32, 32, 6, 0);
+    animController.animations.push_back(runAnim);
+
+    Animation jumpAnim(Texture::GetTexture("src/Assets/Sprites/PlayerJump.png"), 10.0f, 32, 32, 4, 1);
+    animController.animations.push_back(jumpAnim);
+
+    Animation fallAnim(Texture::GetTexture("src/Assets/Sprites/PlayerJump.png"), 10.0f, 32, 32, 1, 5);
+    animController.animations.push_back(fallAnim);
+}
+
+static void PlaceSaw(const glm::vec3& pos) {
+	ErasePrefab(pos);
+
+	entt::entity sawEntity = CreateEntity(pos);
+	AddComponent<PrefabId>(sawEntity).id = sawPrefabId;
+
+	TriggerCircle& triggerCircle = AddComponent<TriggerCircle>(sawEntity);
+	triggerCircle.radius = 0.28f;
+
+	Sprite& sprite = AddComponent<Sprite>(sawEntity);
+	sprite.SetTexture(Texture::GetTexture("src/Assets/Sprites/Saws.png"));
+    sprite.SubTexture(Texture::GetTexture("src/Assets/Sprites/Saws.png"), glm::vec2(32, 32), 64, 64);
+
+	AnimationController& animController = AddComponent<AnimationController>(sawEntity);
+	Animation rotate(Texture::GetTexture("src/Assets/Sprites/Saws.png"), 15.0f, 64, 64, 7, 1);
+	animController.animations.push_back(rotate);
+}
+
 static std::vector<glm::vec2> GenerateCenters(Texture& texture, int cellSize) {
 	const int rowCount = texture.height / cellSize;
 	const int colCount = texture.width / cellSize;
@@ -109,7 +176,10 @@ static void CreateStandardTile(const int prefabId, const entt::entity entity) {
 	else if (isShortRightPlatform) {
 		AddComponent<StaticBox>(entity).Init(0.24f, 0.32f, glm::vec2(-0.04f, 0.0f));
 	}
-	else if (!isSupportBeam) {
+	else if (isSupportBeam) {
+		GetComponent<Transform>(entity).position.z = 2;
+	}
+	else {
 		AddComponent<StaticBox>(entity).Init(0.32f, 0.32f, glm::vec2(0.0f, 0.0f));
 	}
 

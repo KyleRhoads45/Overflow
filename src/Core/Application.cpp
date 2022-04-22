@@ -42,8 +42,6 @@ Application::Application() {
 	Camera& cam = AddComponent<Camera>(camEntity);
 	Camera::SetOrtho(cam, 1920, 1080);
 
-	//PlayerStart();
-	
 	while (true) {
 		Update();
 	}
@@ -57,7 +55,7 @@ void Application::Update() {
 	glfwSetWindowTitle(window, windowTitle.c_str());
 
 	AnimationUpdate(deltaTime);
-	//PlayerUpdate(deltaTime);
+	PlayerUpdate(deltaTime);
 	SawsUpdate(deltaTime);
 	PhysicsUpdate();
 	CameraSystemUpdate();

@@ -22,8 +22,9 @@ static bool showGizmos = false;
 static bool showCreateSceneWindow = false;
 static bool showLoadSceneWindow = false;
 static bool showPrefabWindow = false;
-static bool erasePrefabSelected = false;
+static bool selecetedEraser = false;
 static int selectedPrefabId = 0;
+static int erasePrefabLayer = 0;
 
 static void DrawMenuBar();
 static void DrawPrefabWindow();
@@ -103,18 +104,43 @@ void DrawPrefabWindow() {
 
 	ImGui::Begin("Prefabs", &showPrefabWindow);
 
+	if (ImGui::Button("Player")) {
+		selectedPrefabId = playerPrefabId;
+		selecetedEraser = false;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Saw")) {
+		selectedPrefabId = sawPrefabId;
+		selecetedEraser = false;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Erase")) {
+		selecetedEraser = true;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("-")) {
+		if (erasePrefabLayer > -2) {
+			erasePrefabLayer--;
+		}
+	}
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(erasePrefabLayer).c_str());
+	ImGui::SameLine();
+	if (ImGui::Button("+")) {
+		if (erasePrefabLayer < 2) {
+			erasePrefabLayer++;
+		}
+	}
+
 	for (int i = 0; i < prefabCount; i++) {
-		ImGui::Text(std::to_string(i).c_str());
-
-		ImGui::SameLine();
-
 		//PushID is needed because ImGUI uses textureId for the button Id.
 		//Since we use texture atlasing, textureId can be the same for many buttons.
 		ImGui::PushID(i); 
+
 		IconData data = GetPrefabIcon(i);
 		if (ImGui::ImageButton(data.textureId, ImVec2(60, 60), data.uvMin, data.uvMax)) {
 			selectedPrefabId = i;
-			erasePrefabSelected = false;
+			selecetedEraser = false;
 		}
 
 		ImGui::PopID();
@@ -200,12 +226,12 @@ void PlacePrefab(GLFWwindow* window) {
 
 	const glm::vec3 snappedPos(snappedX, snappedY, 0);
 
-	if (!erasePrefabSelected) {
+	if (!selecetedEraser) {
 		PlacePrefab(selectedPrefabId, snappedPos);
 		return;
 	}
 
-	ErasePrefab(snappedPos);
+	ErasePrefab(glm::vec3(snappedX, snappedY, erasePrefabLayer));
 }
 
 void SetTheme() {
