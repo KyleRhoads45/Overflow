@@ -1,5 +1,6 @@
 #pragma once
 #include <imgui/imgui.h>
+#include <glm/glm.hpp>
 
 struct IconData {
 	ImTextureID textureId;
@@ -8,8 +9,10 @@ struct IconData {
 };
 
 inline int prefabCount = 0;
-const int playerPrefabId = 100;
-const int sawPrefabId = 101;
+constexpr int PlayerPrefabId = 100;
+constexpr int SawPrefabId = 101;
+constexpr int BgPrefabId = 102;
+constexpr int FlagPrefabId = 103;
 
 void PrefabsInit();
 void PlacePrefab(const int prefabId, const glm::vec3& pos);

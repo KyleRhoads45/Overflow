@@ -2,7 +2,6 @@
 #include "../Components/Components.h"
 #include "Scene.h"
 #include "Prefabs.h"
-#include <iostream>
 
 entt::entity CreateEntity() {
 	const entt::entity newEntity = activeScene.registry.create();
@@ -31,8 +30,7 @@ void SaveScene() {
 	const std::string scenePath = "src/Assets/Scenes/" + activeScene.name;
 	std::ofstream output(scenePath);
 
-	const auto& serializeView = GetView<Transform, PrefabId>();
-	for (const auto& [entity, trans, prefabId] : serializeView.each()) {
+	for (auto [entity, trans, prefabId] : GetEachComponent<Transform, PrefabId>()) {
 		output << prefabId.id << ' ' << trans.position.x << ' ' << trans.position.y << ' ' << trans.position.z << "\n";
 	}
 
@@ -45,6 +43,7 @@ void LoadScene(const std::string& sceneName) {
 	const std::string scenePath = "src/Assets/Scenes/" + sceneName;
 	std::ifstream input(scenePath);
 
+	PlacePrefab(BgPrefabId, glm::vec3(0, 0, -10));
 	while (input.good()) {
 		glm::vec3 pos;
 		unsigned int prefabId;

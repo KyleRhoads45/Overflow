@@ -1,6 +1,6 @@
-#include <iostream>
 #include <vector>
 #include <entt/entt.hpp>
+#include "Math.h"
 #include "Scene.h"
 #include "../Components/Components.h"
 #include "Prefabs.h"
@@ -13,16 +13,17 @@ static std::array<int, 3> shortLeftPlatforms = { 26, 32, 35 };
 static std::array<int, 3> shortRightPlatforms = { 27, 29, 33 };
 
 static void PlacePlayer(const glm::vec3& pos);
+static void PlaceFlag(const glm::vec3& pos);
 static void PlaceSaw(const glm::vec3& pos);
-static std::vector<glm::vec2> GenerateCenters(Texture& texture, int cellSize);
+static std::vector<glm::vec2> GenerateCenters(const Texture& texture, int cellSize);
 static void CreateStandardTile(const int prefabId, const entt::entity entity);
 static Texture GetTextureFromPrefabId(const int prefabId);
 static glm::vec2 GetCenterFromPrefabId(const int prefabId);
-static bool ArrayContains(int* arry, int size, int prefabId);
+static bool ArrayContains(const int* arry, int size, int prefabId);
 
 void PrefabsInit() {
-	Texture texSet1 = Texture::GetTexture("src/Assets/Sprites/1_Industrial_Tileset_1.png");
-	Texture texSet2 = Texture::GetTexture("src/Assets/Sprites/1_Industrial_Tileset_3.png");
+	const Texture texSet1 = Texture::GetTexture("src/Assets/Sprites/1_Industrial_Tileset_1.png");
+	const Texture texSet2 = Texture::GetTexture("src/Assets/Sprites/1_Industrial_Tileset_3.png");
 
 	tileSet1Centers = GenerateCenters(texSet1, 32);
 	tileSet2Centers = GenerateCenters(texSet2, 32);
@@ -30,15 +31,28 @@ void PrefabsInit() {
 	prefabCount = tileSet1Centers.size() + tileSet2Centers.size();
 }
 
-
 void PlacePrefab(const int prefabId, const glm::vec3& pos) {
-	if (prefabId == playerPrefabId) {
+	if (prefabId == PlayerPrefabId) {
 		PlacePlayer(glm::vec3(pos.x, pos.y, 1.0f));
 		return;
 	}
 
-	if (prefabId == sawPrefabId) {
+	if (prefabId == SawPrefabId) {
 		PlaceSaw(glm::vec3(pos.x, pos.y, -1.0f));
+		return;
+	}
+
+	if (prefabId == FlagPrefabId) {
+		PlaceFlag(glm::vec3(pos.x, pos.y, -1.0f));
+		return;
+	}
+
+	if (prefabId == BgPrefabId) {
+		const entt::entity bgEntity = CreateEntity(pos);
+		GetComponent<Transform>(bgEntity).scale = glm::vec3(1.5f, 1.5f, 1.0f);
+
+		Sprite& sprite = AddComponent<Sprite>(bgEntity);
+		sprite.SetTexture(Texture::GetTexture("src/Assets/Sprites/FarBG.png"));
 		return;
 	}
 
@@ -48,9 +62,9 @@ void PlacePrefab(const int prefabId, const glm::vec3& pos) {
 }
 
 void ErasePrefab(const glm::vec3& pos) {
-	const auto& serializeView = GetView<Transform, PrefabId>();
+	const auto& serializeView = GetComponentView<Transform, PrefabId>();
 	for (const auto& [entity, trans, prefabId] : serializeView.each()) {
-		if (trans.position == pos) {
+		if (Vec3Distance(trans.position, pos) <= 0.01f) {
 			activeScene.registry.destroy(entity);
 			break;
 		}
@@ -60,18 +74,18 @@ void ErasePrefab(const glm::vec3& pos) {
 IconData GetPrefabIcon(const int prefabId) {
 	IconData data;
 
-	Texture texture = GetTextureFromPrefabId(prefabId);
-	glm::vec2 center = GetCenterFromPrefabId(prefabId);
+	const Texture texture = GetTextureFromPrefabId(prefabId);
+	const glm::vec2 center = GetCenterFromPrefabId(prefabId);
 
-	const int cellWidth = 32;
-	const int cellHeight = 32;
-	const int pixelsPerUnit = 100;
+	constexpr int cellWidth = 32;
+	constexpr int cellHeight = 32;
+	constexpr int pixelsPerUnit = 100;
 
-	const float halfWidth = (cellWidth / 2.0f) / pixelsPerUnit;
-	const float halfHeight = (cellHeight / 2.0f) / pixelsPerUnit;
+	constexpr float halfWidth = (cellWidth / 2.0f) / pixelsPerUnit;
+	constexpr float halfHeight = (cellHeight / 2.0f) / pixelsPerUnit;
 
-	const float halfCellWidth = cellWidth / 2.0f;
-	const float halfCellHeight = cellHeight / 2.0f;
+	constexpr float halfCellWidth = cellWidth / 2.0f;
+	constexpr float halfCellHeight = cellHeight / 2.0f;
 
 	ImVec2 uvMin;
 	ImVec2 uvMax;
@@ -90,7 +104,7 @@ IconData GetPrefabIcon(const int prefabId) {
 }
 
 static void PlacePlayer(const glm::vec3& pos) {
-	const auto& playerView = GetView<DynamicBox>();
+	const auto& playerView = GetComponentView<DynamicBox>();
 	if (playerView.size() != 0) {
 		auto& trans = GetComponent<Transform>(playerView[0]);
 		trans.position = pos;
@@ -98,7 +112,7 @@ static void PlacePlayer(const glm::vec3& pos) {
 	}
 
 	entt::entity playerEntity = CreateEntity(pos);
-	AddComponent<PrefabId>(playerEntity).id = playerPrefabId;
+	AddComponent<PrefabId>(playerEntity).id = PlayerPrefabId;
 
     auto& trans = GetComponent<Transform>(playerEntity);
 
@@ -113,24 +127,37 @@ static void PlacePlayer(const glm::vec3& pos) {
     sprite.SubTexture(Texture::GetTexture("src/Assets/Sprites/PlayerIdle.png"), glm::vec2(16, 80), 32, 32);
 
     auto& animController = AddComponent<AnimationController>(playerEntity);
-    Animation idleAnim(Texture::GetTexture("src/Assets/Sprites/PlayerIdle.png"), 10.0f, 32, 32, 9, 0);
+	const Animation idleAnim(Texture::GetTexture("src/Assets/Sprites/PlayerIdle.png"), 10.0f, 32, 32, 9, 0);
     animController.animations.push_back(idleAnim);
 
-    Animation runAnim(Texture::GetTexture("src/Assets/Sprites/PlayerRun.png"), 20.0f, 32, 32, 6, 0);
+	const Animation runAnim(Texture::GetTexture("src/Assets/Sprites/PlayerRun.png"), 20.0f, 32, 32, 6, 0);
     animController.animations.push_back(runAnim);
 
-    Animation jumpAnim(Texture::GetTexture("src/Assets/Sprites/PlayerJump.png"), 10.0f, 32, 32, 4, 1);
+	const Animation jumpAnim(Texture::GetTexture("src/Assets/Sprites/PlayerJump.png"), 10.0f, 32, 32, 4, 1);
     animController.animations.push_back(jumpAnim);
 
-    Animation fallAnim(Texture::GetTexture("src/Assets/Sprites/PlayerJump.png"), 10.0f, 32, 32, 1, 5);
+	const Animation fallAnim(Texture::GetTexture("src/Assets/Sprites/PlayerJump.png"), 10.0f, 32, 32, 1, 5);
     animController.animations.push_back(fallAnim);
+}
+
+static void PlaceFlag(const glm::vec3& pos) {
+	ErasePrefab(pos);
+
+	const entt::entity flagEntity = CreateEntity(pos);
+	AddComponent<PrefabId>(flagEntity).id = SawPrefabId;
+
+	TriggerCircle& triggerCircle = AddComponent<TriggerCircle>(flagEntity);
+	triggerCircle.radius = 0.14f;
+
+	Sprite& sprite = AddComponent<Sprite>(flagEntity);
+	sprite.SetTexture(Texture::GetTexture("src/Assets/Sprites/Flag.png"));
 }
 
 static void PlaceSaw(const glm::vec3& pos) {
 	ErasePrefab(pos);
 
-	entt::entity sawEntity = CreateEntity(pos);
-	AddComponent<PrefabId>(sawEntity).id = sawPrefabId;
+	const entt::entity sawEntity = CreateEntity(pos);
+	AddComponent<PrefabId>(sawEntity).id = SawPrefabId;
 
 	TriggerCircle& triggerCircle = AddComponent<TriggerCircle>(sawEntity);
 	triggerCircle.radius = 0.28f;
@@ -140,22 +167,22 @@ static void PlaceSaw(const glm::vec3& pos) {
     sprite.SubTexture(Texture::GetTexture("src/Assets/Sprites/Saws.png"), glm::vec2(32, 32), 64, 64);
 
 	AnimationController& animController = AddComponent<AnimationController>(sawEntity);
-	Animation rotate(Texture::GetTexture("src/Assets/Sprites/Saws.png"), 15.0f, 64, 64, 7, 1);
+	const Animation rotate(Texture::GetTexture("src/Assets/Sprites/Saws.png"), 15.0f, 64, 64, 7, 1);
 	animController.animations.push_back(rotate);
 }
 
-static std::vector<glm::vec2> GenerateCenters(Texture& texture, int cellSize) {
+static std::vector<glm::vec2> GenerateCenters(const Texture& texture, const int cellSize) {
 	const int rowCount = texture.height / cellSize;
 	const int colCount = texture.width / cellSize;
 	const int cellCount = rowCount * colCount;
 	
 	std::vector<glm::vec2> centers;
 	for (int i = 0; i < cellCount; i++) {
-		int row = i / colCount;
-		int col = i % colCount;
+		const int row = i / colCount;
+		const int col = i % colCount;
 
-		int x = (cellSize * col) + cellSize / 2;
-		int y = (texture.height - (cellSize * row)) - cellSize / 2;
+		const int x = (cellSize * col) + cellSize / 2;
+		const int y = (texture.height - (cellSize * row)) - cellSize / 2;
 
 		centers.push_back(glm::vec2(x, y));
 	}
@@ -166,9 +193,9 @@ static std::vector<glm::vec2> GenerateCenters(Texture& texture, int cellSize) {
 static void CreateStandardTile(const int prefabId, const entt::entity entity) {
 	AddComponent<PrefabId>(entity).id = prefabId;
 
-	bool isSupportBeam = ArrayContains(&supportBeamIds[0], supportBeamIds.size(), prefabId);
-	bool isShortLeftPlatform = ArrayContains(&shortLeftPlatforms[0], shortLeftPlatforms.size(), prefabId);
-	bool isShortRightPlatform = ArrayContains(&shortRightPlatforms[0], shortRightPlatforms.size(), prefabId);
+	const bool isSupportBeam = ArrayContains(&supportBeamIds[0], supportBeamIds.size(), prefabId);
+	const bool isShortLeftPlatform = ArrayContains(&shortLeftPlatforms[0], shortLeftPlatforms.size(), prefabId);
+	const bool isShortRightPlatform = ArrayContains(&shortRightPlatforms[0], shortRightPlatforms.size(), prefabId);
 
 	if (isShortLeftPlatform) {
 		AddComponent<StaticBox>(entity).Init(0.24f, 0.32f, glm::vec2(0.04f, 0.0f));
@@ -185,7 +212,7 @@ static void CreateStandardTile(const int prefabId, const entt::entity entity) {
 
 	Sprite& sr = AddComponent<Sprite>(entity);
 
-	Texture tileTexture = GetTextureFromPrefabId(prefabId);
+	const Texture tileTexture = GetTextureFromPrefabId(prefabId);
 	sr.SetTexture(tileTexture);
 	sr.SubTexture(tileTexture, GetCenterFromPrefabId(prefabId), 32, 32);
 }
@@ -204,7 +231,7 @@ static glm::vec2 GetCenterFromPrefabId(const int prefabId) {
 	return tileSet2Centers[prefabId - tileSet1Centers.size()];
 }
 
-static bool ArrayContains(int* arry, int size, int prefabId) {
+static bool ArrayContains(const int* arry, const int size, const int prefabId) {
 	for (int i = 0; i < size; i++) {
 		if (arry[i] == prefabId) return true;
 	}

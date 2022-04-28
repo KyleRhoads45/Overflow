@@ -1,11 +1,11 @@
 #include "Scene.h"
 #include "AnimationSystem.h"
-#include <iostream>
+#include "../Components/Components.h"
 
 void AnimationUpdate(const float deltaTime) {
-	const auto& animView = GetView<Sprite, AnimationController>();
+	const auto& animView = GetComponentView<Sprite, AnimationController>();
 
-	for (auto entity : animView) {
+	for (const auto entity : animView) {
 		auto& sprite = animView.get<Sprite>(entity);
 		auto& animController = animView.get<AnimationController>(entity);
 

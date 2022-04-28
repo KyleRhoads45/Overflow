@@ -26,7 +26,7 @@ const static int jumpState = 2;
 const static int fallState = 3;
 
 void PlayerUpdate(const float deltaTime) {
-	const auto& playerView = GetView<DynamicBox>();
+	const auto& playerView = GetComponentView<DynamicBox>();
 	if (playerView.size() == 0) return;
 
 	trans = &GetComponent<Transform>(playerView[0]);

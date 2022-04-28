@@ -6,6 +6,6 @@ struct Camera {
 	glm::mat4 projection;
 
 	static Camera* mainCam;
-	static void SetOrtho(Camera& camera, const float windowWidth, const float windowHeight);
+	static void SetOrtho(Camera& camera, const int windowWidth, const int windowHeight);
 };
 

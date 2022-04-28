@@ -1,4 +1,3 @@
 #pragma once
-#include "../Components/Components.h"
 
-void PhysicsUpdate();
+void PhysicsUpdate(const float deltaTime);

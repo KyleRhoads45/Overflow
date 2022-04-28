@@ -14,6 +14,7 @@
 #define vec3Backward	glm::vec3(0.0f, 0.0f, -1.0f)
 
 glm::vec3 Vec3Lerp(const glm::vec3& a, const glm::vec3& b, const float t);
+float Vec2Distance(const glm::vec3& a, const glm::vec3& b);
 float Vec3Distance(const glm::vec3& a, const glm::vec3& b);
 float MoveTowardsZero(const float val, const float step);
 

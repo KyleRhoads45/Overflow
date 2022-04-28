@@ -2,10 +2,9 @@
 #include "../Components/Components.h"
 #include "Saws.h"
 #include "PlayerController.h"
-#include <iostream>
 
 void SawsUpdate(const float deltaTime) {
-	const auto& sawView = GetView<TriggerCircle>();
+	const auto& sawView = GetComponentView<TriggerCircle, AnimationController>();
 	for (const auto& entity : sawView) {
 		TriggerCircle& trigger = GetComponent<TriggerCircle>(entity);
 		if (trigger.triggered) {

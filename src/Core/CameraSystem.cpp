@@ -5,7 +5,7 @@
 #include <iostream>
 
 void CameraSystemUpdate() {
-	const auto& cameraView = GetView<Transform, Camera>();
+	const auto& cameraView = GetComponentView<Transform, Camera>();
 	for (const auto entity : cameraView) {
 		Transform& trans = cameraView.get<Transform>(entity);
 		Camera& cam = cameraView.get<Camera>(entity);

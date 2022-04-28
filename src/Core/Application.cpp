@@ -8,12 +8,19 @@
 #include "Prefabs.h"
 #include "../Editor/Editor.h"
 #include "../Renderer/Renderer.h"
-#include "../Renderer/Texture.h"
 #include "../Gameplay/PlayerController.h"
 #include "../Gameplay/Saws.h"
+#include "../Components/Components.h"
 #include "Application.h"
 
-Application::Application() {
+static void Update();
+static void Exit();
+static float GetDeltaTime();
+static void OnWindowResize(GLFWwindow* window, int width, int height);
+
+static GLFWwindow* window;
+
+void AppRun() {
 	if (!glfwInit()) {
 		std::cout << "Failed to init glfw\n";
 	}
@@ -47,17 +54,21 @@ Application::Application() {
 	}
 }
 
-void Application::Update() {
+static void Update() {
 	glfwPollEvents();
-	
-	float deltaTime = GetDeltaTime();
-	std::string windowTitle = "Overflow " + std::to_string((int)(1.0 / deltaTime)) + "fps";
+
+	const float deltaTime = GetDeltaTime();
+
+	//Ignore really long frames
+	if (deltaTime >= 0.1f) return;
+
+	const std::string windowTitle = "Overflow " + std::to_string((int)(1.0f / deltaTime)) + "fps";
 	glfwSetWindowTitle(window, windowTitle.c_str());
 
 	AnimationUpdate(deltaTime);
 	PlayerUpdate(deltaTime);
 	SawsUpdate(deltaTime);
-	PhysicsUpdate();
+	PhysicsUpdate(deltaTime);
 	CameraSystemUpdate();
 	RendererRenderScene(activeScene);
 	EditorUpdate(window);
@@ -68,20 +79,20 @@ void Application::Update() {
 	}
 }
 
-void Application::Exit() {
+static void Exit() {
 	glfwTerminate();
 	exit(0);
 }
 
-void Application::OnWindowResize(GLFWwindow* w, int width, int height) {
+static void OnWindowResize(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 	Camera::SetOrtho(*Camera::mainCam, width, height);
 }
 
-const float Application::GetDeltaTime() {
-	static float lastTime = 0;
-    const float currentTime = glfwGetTime();
-    const float deltaTime = currentTime - lastTime;
+static float GetDeltaTime() {
+	static double lastTime = 0;
+    const double currentTime = glfwGetTime();
+	const float deltaTime = (float)(currentTime - lastTime);
     lastTime = currentTime;
     return deltaTime;
 }

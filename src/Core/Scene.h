@@ -25,8 +25,13 @@ Component& GetComponent(const entt::entity& entity) {
 	return activeScene.registry.get<Component>(entity);
 }
 
-template<typename ...Component>
-auto GetView() {
+template<typename... Component>
+auto GetComponentView() {
 	return activeScene.registry.view<Component...>();
+}
+
+template<typename... Component>
+auto GetEachComponent() {
+	return activeScene.registry.view<Component...>().each();
 }
 

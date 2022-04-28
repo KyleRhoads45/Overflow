@@ -105,12 +105,17 @@ void DrawPrefabWindow() {
 	ImGui::Begin("Prefabs", &showPrefabWindow);
 
 	if (ImGui::Button("Player")) {
-		selectedPrefabId = playerPrefabId;
+		selectedPrefabId = PlayerPrefabId;
 		selecetedEraser = false;
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Saw")) {
-		selectedPrefabId = sawPrefabId;
+		selectedPrefabId = SawPrefabId;
+		selecetedEraser = false;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Flag")) {
+		selectedPrefabId = FlagPrefabId;
 		selecetedEraser = false;
 	}
 	ImGui::SameLine();
@@ -300,23 +305,23 @@ void SetTheme() {
 }
 
 void RenderAllGizmos() {
-	const auto& dynamicBoxView = GetView<Transform, DynamicBox>();
+	const auto& dynamicBoxView = GetComponentView<Transform, DynamicBox>();
 	for (const auto& [entity, trans, box] : dynamicBoxView.each()) {
 		RendererDebugDrawRect(trans.position, box.width, box.height);
 	}
 
-	const auto& staticBoxView = GetView<Transform, StaticBox>();
+	const auto& staticBoxView = GetComponentView<Transform, StaticBox>();
 	for (const auto& [entity, trans, box] : staticBoxView.each()) {
 		glm::vec3 pos(trans.position.x + box.offset.x, trans.position.y + box.offset.y, trans.position.z);
 		RendererDebugDrawRect(pos, box.width, box.height);
 	}
 
-	const auto& dynamicCircleView = GetView<Transform, DynamicCircle>();
+	const auto& dynamicCircleView = GetComponentView<Transform, DynamicCircle>();
 	for (const auto& [entity, trans, circle] : dynamicCircleView.each()) {
 		RendererDebugDrawCircle(trans.position, circle.radius);
 	}
 
-	const auto& triggerCircleView = GetView<Transform, TriggerCircle>();
+	const auto& triggerCircleView = GetComponentView<Transform, TriggerCircle>();
 	for (const auto& [entity, trans, circle] : triggerCircleView.each()) {
 		RendererDebugDrawCircle(trans.position, circle.radius);
 	}
