@@ -99,6 +99,9 @@
     <ClCompile Include="src\Core\Prefabs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Gameplay\Flag.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\glad\glad.h">
@@ -1067,6 +1070,9 @@
     <ClInclude Include="src\Components\PrefabId.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Gameplay\Flag.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Assets\Shaders\Standard.frag" />
@@ -1481,6 +1487,9 @@
     <None Include="include\glm\gtc\ulp.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="src\Assets\Scenes\Level01" />
+    <None Include="src\Assets\Scenes\Level02" />
+    <None Include="src\Assets\Scenes\Level03" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="src\Assets\Sprites\1_Industrial_Tileset_1.png">
@@ -1502,6 +1511,12 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="src\Assets\Sprites\1_Industrial_Tileset_3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Flag.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\2_Industrial_Tileset_1_Background.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

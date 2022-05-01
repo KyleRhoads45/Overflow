@@ -15,7 +15,7 @@ constexpr int BgPrefabId = 102;
 constexpr int FlagPrefabId = 103;
 
 void PrefabsInit();
-void PlacePrefab(const int prefabId, const glm::vec3& pos);
+void PlacePrefab(const int prefabId, glm::vec3 pos);
 void ErasePrefab(const glm::vec3& pos);
 IconData GetPrefabIcon(const int prefabId);
 

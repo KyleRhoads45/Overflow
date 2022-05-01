@@ -11,7 +11,6 @@ static Sprite* sprite;
 static AnimationController* animController;
 
 static glm::vec3 velocity;
-static const glm::vec3 startPos = glm::vec3(-3.5f, -1.6f, 1.0f);
 static bool spriteFlipped = false;
 
 const static float groundAcc = 90.0f;
@@ -86,8 +85,5 @@ void PlayerUpdate(const float deltaTime) {
 }
 
 void OnSawTrigger() {
-    velocity = glm::vec3(0, 0, 0);
-    trans->position = startPos;
-    dynamicBox->lastCenter = startPos;
-    dynamicBox->center = startPos;
+    LoadScene(activeScene.name);
 }

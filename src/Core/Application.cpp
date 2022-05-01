@@ -10,6 +10,7 @@
 #include "../Renderer/Renderer.h"
 #include "../Gameplay/PlayerController.h"
 #include "../Gameplay/Saws.h"
+#include "../Gameplay/Flag.h"
 #include "../Components/Components.h"
 #include "Application.h"
 
@@ -68,6 +69,7 @@ static void Update() {
 	AnimationUpdate(deltaTime);
 	PlayerUpdate(deltaTime);
 	SawsUpdate(deltaTime);
+	FlagUpdate();
 	PhysicsUpdate(deltaTime);
 	CameraSystemUpdate();
 	RendererRenderScene(activeScene);

@@ -7,6 +7,7 @@
 
 static std::vector<glm::vec2> tileSet1Centers;
 static std::vector<glm::vec2> tileSet2Centers;
+static std::vector<glm::vec2> tileSet3Centers;
 
 static std::array<int, 5> supportBeamIds = { 25, 28, 31, 34, 37 };
 static std::array<int, 3> shortLeftPlatforms = { 26, 32, 35 };
@@ -24,14 +25,16 @@ static bool ArrayContains(const int* arry, int size, int prefabId);
 void PrefabsInit() {
 	const Texture texSet1 = Texture::GetTexture("src/Assets/Sprites/1_Industrial_Tileset_1.png");
 	const Texture texSet2 = Texture::GetTexture("src/Assets/Sprites/1_Industrial_Tileset_3.png");
+	const Texture texSet3 = Texture::GetTexture("src/Assets/Sprites/2_Industrial_Tileset_1_Background.png");
 
 	tileSet1Centers = GenerateCenters(texSet1, 32);
 	tileSet2Centers = GenerateCenters(texSet2, 32);
+	tileSet3Centers = GenerateCenters(texSet3, 32);
 
-	prefabCount = tileSet1Centers.size() + tileSet2Centers.size();
+	prefabCount = tileSet1Centers.size() + tileSet2Centers.size() + tileSet3Centers.size();
 }
 
-void PlacePrefab(const int prefabId, const glm::vec3& pos) {
+void PlacePrefab(const int prefabId, glm::vec3 pos) {
 	if (prefabId == PlayerPrefabId) {
 		PlacePlayer(glm::vec3(pos.x, pos.y, 1.0f));
 		return;
@@ -57,6 +60,12 @@ void PlacePrefab(const int prefabId, const glm::vec3& pos) {
 	}
 
 	entt::entity entity = CreateEntity(pos);
+
+	if (prefabId >= tileSet1Centers.size() + tileSet2Centers.size()) {
+		pos.z = -2;
+		GetComponent<Transform>(entity).position = pos;
+	}
+
 	ErasePrefab(pos);
 	CreateStandardTile(prefabId, entity);
 }
@@ -144,7 +153,7 @@ static void PlaceFlag(const glm::vec3& pos) {
 	ErasePrefab(pos);
 
 	const entt::entity flagEntity = CreateEntity(pos);
-	AddComponent<PrefabId>(flagEntity).id = SawPrefabId;
+	AddComponent<PrefabId>(flagEntity).id = FlagPrefabId;
 
 	TriggerCircle& triggerCircle = AddComponent<TriggerCircle>(flagEntity);
 	triggerCircle.radius = 0.14f;
@@ -206,7 +215,7 @@ static void CreateStandardTile(const int prefabId, const entt::entity entity) {
 	else if (isSupportBeam) {
 		GetComponent<Transform>(entity).position.z = 2;
 	}
-	else {
+	else if (prefabId < tileSet1Centers.size() + tileSet2Centers.size()) {
 		AddComponent<StaticBox>(entity).Init(0.32f, 0.32f, glm::vec2(0.0f, 0.0f));
 	}
 
@@ -221,14 +230,20 @@ static Texture GetTextureFromPrefabId(const int prefabId) {
 	if (prefabId < tileSet1Centers.size()) {
 		return Texture::GetTexture("src/Assets/Sprites/1_Industrial_Tileset_1.png");
 	}
-	return Texture::GetTexture("src/Assets/Sprites/1_Industrial_Tileset_3.png");
+	if (prefabId < tileSet1Centers.size() + tileSet2Centers.size()) {
+		return Texture::GetTexture("src/Assets/Sprites/1_Industrial_Tileset_3.png");
+	}
+	return Texture::GetTexture("src/Assets/Sprites/2_Industrial_Tileset_1_Background.png");
 }
 
 static glm::vec2 GetCenterFromPrefabId(const int prefabId) {
 	if (prefabId < tileSet1Centers.size()) {
 		return tileSet1Centers[prefabId];
 	}
-	return tileSet2Centers[prefabId - tileSet1Centers.size()];
+	if (prefabId < tileSet1Centers.size() + tileSet2Centers.size()) {
+		return tileSet2Centers[prefabId - tileSet1Centers.size()];
+	}
+	return tileSet3Centers[prefabId - tileSet1Centers.size() - tileSet2Centers.size()];
 }
 
 static bool ArrayContains(const int* arry, const int size, const int prefabId) {

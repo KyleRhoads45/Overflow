@@ -125,7 +125,7 @@ void RendererRenderScene(Scene& scene) {
 void RendererEndFrame(GLFWwindow* window) {
 	glfwSwapBuffers(window);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(1, 1, 1, 1);
+	glClearColor(0.882, 0.925, 0.968, 1);
 }
 
 void RendererDebugDrawRect(const glm::vec2& pos, const float width, const float height) {

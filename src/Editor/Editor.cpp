@@ -14,6 +14,7 @@
 #include "../Core/Scene.h"
 #include "../Core/Input.h"
 #include "../Core/Prefabs.h"
+#include "../Gameplay/Flag.h"
 #include "Editor.h"
 
 #define C_ARRAY_SIZE(_ARR) ((int)(sizeof(_ARR) / sizeof(*(_ARR))))
@@ -185,13 +186,16 @@ void DrawLoadSceneWindow() {
 
 	ImGui::Begin("Load Scene", &showLoadSceneWindow);
 
+	int sceneIndex = 0;
 	std::string scenePath = "src/Assets/Scenes";
 	for (const auto& sceneFile : std::filesystem::directory_iterator(scenePath)) {
 		const std::string sceneName = sceneFile.path().filename().string();
 		if (ImGui::Button(sceneName.c_str())) {
 			LoadScene(sceneName);
+			FlagSetSceneIndex(sceneIndex);
 			showLoadSceneWindow = false;
 		}
+		sceneIndex++;
 	}
 
 	ImGui::End();

@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Gameplay\Flag.cpp" />
     <ClCompile Include="include\glm\detail\glm.cpp" />
     <ClCompile Include="include\imgui\imgui.cpp" />
     <ClCompile Include="include\imgui\imgui_demo.cpp" />
@@ -177,6 +178,7 @@
     <ClCompile Include="src\Renderer\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Gameplay\Flag.h" />
     <ClInclude Include="include\entt\entt.hpp" />
     <ClInclude Include="include\glfw\glfw3.h" />
     <ClInclude Include="include\glfw\glfw3native.h" />
@@ -637,6 +639,9 @@
     <None Include="include\glm\gtx\vector_angle.inl" />
     <None Include="include\glm\gtx\vector_query.inl" />
     <None Include="include\glm\gtx\wrap.inl" />
+    <None Include="src\Assets\Scenes\Level01" />
+    <None Include="src\Assets\Scenes\Level02" />
+    <None Include="src\Assets\Scenes\Level03" />
     <None Include="src\Assets\Shaders\Gizmos.frag" />
     <None Include="src\Assets\Shaders\Gizmos.vert" />
     <None Include="src\Assets\Shaders\Standard.frag" />
@@ -645,7 +650,9 @@
   <ItemGroup>
     <Image Include="src\Assets\Sprites\1_Industrial_Tileset_1.png" />
     <Image Include="src\Assets\Sprites\1_Industrial_Tileset_3.png" />
+    <Image Include="src\Assets\Sprites\2_Industrial_Tileset_1_Background.png" />
     <Image Include="src\Assets\Sprites\FarBG.png" />
+    <Image Include="src\Assets\Sprites\Flag.png" />
     <Image Include="src\Assets\Sprites\PlayerIdle.png" />
     <Image Include="src\Assets\Sprites\PlayerJump.png" />
     <Image Include="src\Assets\Sprites\PlayerRun.png" />
