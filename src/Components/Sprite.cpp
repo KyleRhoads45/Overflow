@@ -69,6 +69,8 @@ void Sprite::SetTexture(const Texture& texture) {
 }
 
 void Sprite::SubTexture(const Texture& texture, const glm::vec2& center, int cellWidth, int cellHeight) {
+	textureId = texture.id;
+
 	const int pixelsPerUnit = 100;
 	const float halfWidth = (cellWidth / 2.0f) / pixelsPerUnit;
 	const float halfHeight = (cellHeight / 2.0f) / pixelsPerUnit;

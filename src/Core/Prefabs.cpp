@@ -53,9 +53,7 @@ void PlacePrefab(const int prefabId, glm::vec3 pos) {
 	if (prefabId == BgPrefabId) {
 		const entt::entity bgEntity = CreateEntity(pos);
 		GetComponent<Transform>(bgEntity).scale = glm::vec3(1.5f, 1.5f, 1.0f);
-
-		Sprite& sprite = AddComponent<Sprite>(bgEntity);
-		sprite.SetTexture(Texture::GetTexture("src/Assets/Sprites/FarBG.png"));
+		AddComponent<Sprite>(bgEntity).SetTexture(Texture::GetTexture("src/Assets/Sprites/FarBG.png"));
 		return;
 	}
 
@@ -115,8 +113,7 @@ IconData GetPrefabIcon(const int prefabId) {
 static void PlacePlayer(const glm::vec3& pos) {
 	const auto& playerView = GetComponentView<DynamicBox>();
 	if (playerView.size() != 0) {
-		auto& trans = GetComponent<Transform>(playerView[0]);
-		trans.position = pos;
+		GetComponent<Transform>(playerView[0]).position = pos;
 		return;
 	}
 
@@ -124,28 +121,24 @@ static void PlacePlayer(const glm::vec3& pos) {
 	AddComponent<PrefabId>(playerEntity).id = PlayerPrefabId;
 
     auto& trans = GetComponent<Transform>(playerEntity);
-
-    auto& dynamicBox = AddComponent<DynamicBox>(playerEntity);
-    dynamicBox.Init(0.15f, 0.3f, trans.position);
+    AddComponent<DynamicBox>(playerEntity).Init(0.15f, 0.3f, trans.position);
 
     auto& dynamicCircle = AddComponent<DynamicCircle>(playerEntity);
     dynamicCircle.radius = 0.12f;
     
-    auto& sprite = AddComponent<Sprite>(playerEntity);
-    sprite.SetTexture(Texture::GetTexture("src/Assets/Sprites/PlayerIdle.png"));
-    sprite.SubTexture(Texture::GetTexture("src/Assets/Sprites/PlayerIdle.png"), glm::vec2(16, 80), 32, 32);
+    AddComponent<Sprite>(playerEntity).SubTexture(Texture::GetTexture("src/Assets/Sprites/PlayerIdle.png"), glm::vec2(16, 80), 32, 32);
 
     auto& animController = AddComponent<AnimationController>(playerEntity);
-	const Animation idleAnim(Texture::GetTexture("src/Assets/Sprites/PlayerIdle.png"), 10.0f, 32, 32, 9, 0);
+	const Animation idleAnim(Texture::GetTexture("src/Assets/Sprites/PlayerIdle.png"), 10.0f, 32, 32, 9, 0, true);
     animController.animations.push_back(idleAnim);
 
-	const Animation runAnim(Texture::GetTexture("src/Assets/Sprites/PlayerRun.png"), 20.0f, 32, 32, 6, 0);
+	const Animation runAnim(Texture::GetTexture("src/Assets/Sprites/PlayerRun.png"), 20.0f, 32, 32, 6, 0, true);
     animController.animations.push_back(runAnim);
 
-	const Animation jumpAnim(Texture::GetTexture("src/Assets/Sprites/PlayerJump.png"), 10.0f, 32, 32, 4, 1);
+	const Animation jumpAnim(Texture::GetTexture("src/Assets/Sprites/PlayerJump.png"), 10.0f, 32, 32, 4, 1, false);
     animController.animations.push_back(jumpAnim);
 
-	const Animation fallAnim(Texture::GetTexture("src/Assets/Sprites/PlayerJump.png"), 10.0f, 32, 32, 1, 5);
+	const Animation fallAnim(Texture::GetTexture("src/Assets/Sprites/PlayerJump.png"), 10.0f, 32, 32, 1, 5, false);
     animController.animations.push_back(fallAnim);
 }
 
@@ -154,12 +147,8 @@ static void PlaceFlag(const glm::vec3& pos) {
 
 	const entt::entity flagEntity = CreateEntity(pos);
 	AddComponent<PrefabId>(flagEntity).id = FlagPrefabId;
-
-	TriggerCircle& triggerCircle = AddComponent<TriggerCircle>(flagEntity);
-	triggerCircle.radius = 0.14f;
-
-	Sprite& sprite = AddComponent<Sprite>(flagEntity);
-	sprite.SetTexture(Texture::GetTexture("src/Assets/Sprites/Flag.png"));
+	AddComponent<TriggerCircle>(flagEntity).Init(0.14f, pos);
+	AddComponent<Sprite>(flagEntity).SetTexture(Texture::GetTexture("src/Assets/Sprites/Flag.png"));
 }
 
 static void PlaceSaw(const glm::vec3& pos) {
@@ -167,17 +156,15 @@ static void PlaceSaw(const glm::vec3& pos) {
 
 	const entt::entity sawEntity = CreateEntity(pos);
 	AddComponent<PrefabId>(sawEntity).id = SawPrefabId;
+	AddComponent<TriggerCircle>(sawEntity).Init(0.28f, pos);
+	//AddComponent<Sprite>(sawEntity).SubTexture(Texture::GetTexture("src/Assets/Sprites/Saws.png"), glm::vec2(32, 32), 64, 64);
+	AddComponent<Sprite>(sawEntity).SetTexture(Texture::GetTexture("src/Assets/Sprites/BetterSaw.png"));
 
-	TriggerCircle& triggerCircle = AddComponent<TriggerCircle>(sawEntity);
-	triggerCircle.radius = 0.28f;
-
-	Sprite& sprite = AddComponent<Sprite>(sawEntity);
-	sprite.SetTexture(Texture::GetTexture("src/Assets/Sprites/Saws.png"));
-    sprite.SubTexture(Texture::GetTexture("src/Assets/Sprites/Saws.png"), glm::vec2(32, 32), 64, 64);
-
+	/*
 	AnimationController& animController = AddComponent<AnimationController>(sawEntity);
-	const Animation rotate(Texture::GetTexture("src/Assets/Sprites/Saws.png"), 15.0f, 64, 64, 7, 1);
+	const Animation rotate(Texture::GetTexture("src/Assets/Sprites/Saws.png"), 15.0f, 64, 64, 7, 1, true);
 	animController.animations.push_back(rotate);
+	*/
 }
 
 static std::vector<glm::vec2> GenerateCenters(const Texture& texture, const int cellSize) {
@@ -219,11 +206,8 @@ static void CreateStandardTile(const int prefabId, const entt::entity entity) {
 		AddComponent<StaticBox>(entity).Init(0.32f, 0.32f, glm::vec2(0.0f, 0.0f));
 	}
 
-	Sprite& sr = AddComponent<Sprite>(entity);
-
 	const Texture tileTexture = GetTextureFromPrefabId(prefabId);
-	sr.SetTexture(tileTexture);
-	sr.SubTexture(tileTexture, GetCenterFromPrefabId(prefabId), 32, 32);
+	AddComponent<Sprite>(entity).SubTexture(tileTexture, GetCenterFromPrefabId(prefabId), 32, 32);
 }
 
 static Texture GetTextureFromPrefabId(const int prefabId) {

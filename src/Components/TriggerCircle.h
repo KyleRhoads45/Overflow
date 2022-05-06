@@ -2,9 +2,13 @@
 #include <glm/glm.hpp>
 
 struct TriggerCircle {
-
-	glm::vec2 center;
 	float radius;
-	bool triggered = false;
+	glm::vec2 center;
+	bool triggered;
 
+	void Init(const float radius, const glm::vec2& center) {
+		this->radius = radius;
+		this->center = center;
+		triggered = false;
+	}
 };

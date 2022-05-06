@@ -60,9 +60,6 @@
     <ClCompile Include="src\Renderer\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Components\AnimationController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Core\CameraSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1517,6 +1514,12 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="src\Assets\Sprites\2_Industrial_Tileset_1_Background.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\BetterSaw.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\BetterSaw.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

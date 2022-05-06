@@ -2,23 +2,26 @@
 #include <glm/glm.hpp>
 
 struct DynamicBox {
-
 	float width;
 	float height;
 
 	glm::vec3 center;
 	glm::vec3 lastCenter;
 
-	bool rightColliding = false;
-	bool leftColliding = false;
-	bool upColliding = false;
-	bool downColliding = false;
+	bool rightColliding;
+	bool leftColliding;
+	bool upColliding;
+	bool downColliding;
 
-	void Init(float width, float height, glm::vec3& pos) {
+	void Init(const float width, const float height, const glm::vec3& center) {
 		this->width = width;
 		this->height = height;
-		center = pos;
-		lastCenter = pos;
-	};
+		this->center = center;
+		lastCenter = center;
 
+		rightColliding = false;
+		leftColliding = false;
+		upColliding = false;
+		downColliding = false;
+	}
 };

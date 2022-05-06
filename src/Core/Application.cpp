@@ -13,6 +13,8 @@
 #include "../Gameplay/Flag.h"
 #include "../Components/Components.h"
 #include "Application.h"
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 static void Update();
 static void Exit();
@@ -32,7 +34,7 @@ void AppRun() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-	window = glfwCreateWindow(1920, 1080, "Overflow", NULL, NULL);
+	window = glfwCreateWindow(1920, 1080, "Super Alright Game", NULL, NULL);
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(0);
 	glfwSetWindowSizeCallback(window, OnWindowResize);
@@ -45,6 +47,8 @@ void AppRun() {
 	RendererInit();
 	PrefabsInit();
 	EditorInit(window);
+
+	LoadScene("Level01");
 
 	const entt::entity camEntity = CreateEntity(glm::vec3(0, 0, 10));
 	Camera& cam = AddComponent<Camera>(camEntity);

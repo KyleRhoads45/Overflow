@@ -160,7 +160,6 @@
     <ClCompile Include="src\Editor\Editor.cpp" />
     <ClCompile Include="src\Gameplay\Saws.cpp" />
     <ClCompile Include="src\Core\CameraSystem.cpp" />
-    <ClCompile Include="src\Components\AnimationController.cpp" />
     <ClCompile Include="src\Core\AnimationSystem.cpp" />
     <ClCompile Include="include\stb\stb_image.cpp" />
     <ClCompile Include="src\Core\Math.cpp" />
@@ -648,9 +647,11 @@
     <None Include="src\Assets\Shaders\Standard.vert" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\BetterSaw.png" />
     <Image Include="src\Assets\Sprites\1_Industrial_Tileset_1.png" />
     <Image Include="src\Assets\Sprites\1_Industrial_Tileset_3.png" />
     <Image Include="src\Assets\Sprites\2_Industrial_Tileset_1_Background.png" />
+    <Image Include="src\Assets\Sprites\BetterSaw.png" />
     <Image Include="src\Assets\Sprites\FarBG.png" />
     <Image Include="src\Assets\Sprites\Flag.png" />
     <Image Include="src\Assets\Sprites\PlayerIdle.png" />
