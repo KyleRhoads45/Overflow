@@ -13,7 +13,8 @@
 #include "../Gameplay/Flag.h"
 #include "../Components/Components.h"
 #include "Application.h"
-#include <glm/ext/matrix_transform.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
 
 static void Update();

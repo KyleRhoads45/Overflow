@@ -4,6 +4,7 @@
 #include "../Components/Components.h"
 #include "../Core/Application.h"
 #include "PlayerController.h"
+#include <glfw/glfw3.h>
 #include <iostream>
 
 static Transform* trans;
@@ -12,7 +13,6 @@ static Sprite* sprite;
 static AnimationController* animController;
 
 static glm::vec3 velocity;
-static bool spriteFlipped = false;
 
 const static float groundAcc = 90.0f;
 const static float airAcc = 15.0f;
@@ -22,8 +22,15 @@ const static float airFriction = 3.5f;
 
 static bool jumping = false;
 const static float minJumpForce = 0.3f;
-const static float jumpAcc = 27.0f;
+const static float jumpAcc = 33.0f;
 const static float maxJumpForce = 4.0f;
+
+const static float resetTime = 0.3f;
+static float curResetTime = 0.0f;
+static bool dead = false;
+
+const static float startTime = 0.3f;
+static float curStartTime = 0.0f;
 
 const static int idleState = 0;
 const static int runState = 1;
@@ -36,13 +43,29 @@ static void UpdateAnimations();
 static void ApplyGravity(const float deltaTime);
 
 void PlayerUpdate(const float deltaTime) {
-	const auto& playerView = GetComponentView<DynamicBox>();
-	if (playerView.size() == 0) return;
+    const auto& playerView = GetComponentView<DynamicBox>();
+    if (playerView.size() == 0) return;
 
-	trans = &GetComponent<Transform>(playerView[0]);
-	dynamicBox = &GetComponent<DynamicBox>(playerView[0]);
+    trans = &GetComponent<Transform>(playerView[0]);
+    dynamicBox = &GetComponent<DynamicBox>(playerView[0]);
     sprite = &GetComponent<Sprite>(playerView[0]);
     animController = &GetComponent<AnimationController>(playerView[0]);
+
+    if (dead) {
+        curResetTime += deltaTime;
+        if (curResetTime >= resetTime) {
+            dead = false;
+            curResetTime = 0.0f;
+            LoadScene(activeScene.name);
+        }
+        return;
+    }
+
+    if (curStartTime < startTime) {
+        curStartTime += deltaTime;
+        return;
+    }
+    curStartTime = startTime + 1.0f;
 
     Move(deltaTime);
     ClampMovement(deltaTime);
@@ -53,11 +76,32 @@ void PlayerUpdate(const float deltaTime) {
 }
 
 void OnSawTrigger() {
-    LoadScene(activeScene.name);
+    velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+    dead = true;
+    jumping = false;
+}
+
+void OnFlagTrigger() {
+    velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+    jumping = false;
+    curStartTime = 0.0f;
 }
 
 static void Move(const float deltaTime) {
     float acc = (dynamicBox->downColliding) ? groundAcc : airAcc;
+
+    int axisCount;
+    const float* axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axisCount);
+    float xControllerInput = axes[0];
+
+    if (xControllerInput > 0.15f) {
+        velocity.x += acc * xControllerInput * deltaTime;
+        sprite->Flip(false);
+    }
+    if (xControllerInput < -0.15f) {
+        velocity.x += acc * xControllerInput * deltaTime;
+        sprite->Flip(true);
+    }
 
     if (OnKeyHold(GLFW_KEY_A)) {
         velocity.x -= acc * deltaTime;
@@ -101,16 +145,24 @@ static void UpdateAnimations() {
 }
 
 static void ApplyGravity(const float deltaTime) {
-    if (!jumping && OnKeyHold(GLFW_KEY_SPACE) && dynamicBox->downColliding) {
+    int buttonCount;
+    const unsigned char* buttons = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &buttonCount);
+
+    bool jumpInput = false;
+    if (OnKeyHold(GLFW_KEY_SPACE) || buttons[1] == GLFW_PRESS) {
+        jumpInput = true;
+    }
+
+    if (!jumping && jumpInput && dynamicBox->downColliding) {
         jumping = true;
         velocity.y = minJumpForce;
     }
 
-    if (OnKeyHold(GLFW_KEY_SPACE) && jumping) {
+    if (jumpInput && jumping) {
         velocity.y += jumpAcc * deltaTime;
     }
 
-    if (!OnKeyHold(GLFW_KEY_SPACE) && jumping) {
+    if (!jumpInput && jumping) {
         jumping = false;
     }
 

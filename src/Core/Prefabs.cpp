@@ -121,7 +121,7 @@ static void PlacePlayer(const glm::vec3& pos) {
 	AddComponent<PrefabId>(playerEntity).id = PlayerPrefabId;
 
     auto& trans = GetComponent<Transform>(playerEntity);
-    AddComponent<DynamicBox>(playerEntity).Init(0.15f, 0.3f, trans.position);
+    AddComponent<DynamicBox>(playerEntity).Init(0.15f, 0.32f, trans.position);
 
     auto& dynamicCircle = AddComponent<DynamicCircle>(playerEntity);
     dynamicCircle.radius = 0.12f;
@@ -157,14 +157,7 @@ static void PlaceSaw(const glm::vec3& pos) {
 	const entt::entity sawEntity = CreateEntity(pos);
 	AddComponent<PrefabId>(sawEntity).id = SawPrefabId;
 	AddComponent<TriggerCircle>(sawEntity).Init(0.28f, pos);
-	//AddComponent<Sprite>(sawEntity).SubTexture(Texture::GetTexture("src/Assets/Sprites/Saws.png"), glm::vec2(32, 32), 64, 64);
 	AddComponent<Sprite>(sawEntity).SetTexture(Texture::GetTexture("src/Assets/Sprites/BetterSaw.png"));
-
-	/*
-	AnimationController& animController = AddComponent<AnimationController>(sawEntity);
-	const Animation rotate(Texture::GetTexture("src/Assets/Sprites/Saws.png"), 15.0f, 64, 64, 7, 1, true);
-	animController.animations.push_back(rotate);
-	*/
 }
 
 static std::vector<glm::vec2> GenerateCenters(const Texture& texture, const int cellSize) {

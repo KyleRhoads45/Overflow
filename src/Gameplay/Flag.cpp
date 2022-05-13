@@ -1,6 +1,7 @@
 #include "../Core/Prefabs.h"
 #include "../Core/Scene.h"
 #include "../Components/Components.h"
+#include "../Gameplay/PlayerController.h"
 #include "Flag.h"
 
 static int curScene = 0;
@@ -8,6 +9,8 @@ static std::string scenes[] {
 	"Level01",
 	"Level02",
 	"Level03",
+	"Level04",
+	"Level05"
 };
 
 void FlagUpdate() {
@@ -17,10 +20,11 @@ void FlagUpdate() {
 		if (triggerCircle.triggered) {
 			triggerCircle.triggered = false;
 			curScene++;
-			if (curScene >= 3) {
+			if (curScene >= 4) {
 				curScene = 0;
 			}
 			LoadScene(scenes[curScene]);
+			OnSawTrigger();
 		}
 	}
 }
