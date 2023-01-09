@@ -6,6 +6,7 @@ A platformer game made mostly from sratch.
 ### Libraries
 * [glfw3](https://github.com/glfw/glfw) - Used for window creation and input.
 * [glad](https://github.com/Dav1dde/glad) - Used to load modern OpenGL functions.
+* [glm](https://github.com/g-truc/glm) - OpenGL mathematics.
 * [entt](https://github.com/skypjack/entt) - Entity component system.
 * [stb_image](https://github.com/nothings/stb/blob/master/stb_image.h) - Used to load images.
 
