@@ -90,18 +90,21 @@ void OnFlagTrigger() {
 static void Move(const float deltaTime) {
     float acc = (dynamicBox->downColliding) ? groundAcc : airAcc;
 
-    int axisCount;
-    const float* axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axisCount);
-    float xControllerInput = axes[0];
+    if (glfwJoystickPresent(GLFW_JOYSTICK_1)) {
+		int axisCount;
+		const float* axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axisCount);
+		float xControllerInput = axes[0];
 
-    if (xControllerInput > 0.15f) {
-        velocity.x += acc * xControllerInput * deltaTime;
-        sprite->Flip(false);
+		if (xControllerInput > 0.15f) {
+			velocity.x += acc * xControllerInput * deltaTime;
+			sprite->Flip(false);
+		}
+		if (xControllerInput < -0.15f) {
+			velocity.x += acc * xControllerInput * deltaTime;
+			sprite->Flip(true);
+		}
     }
-    if (xControllerInput < -0.15f) {
-        velocity.x += acc * xControllerInput * deltaTime;
-        sprite->Flip(true);
-    }
+
 
     if (OnKeyHold(GLFW_KEY_A)) {
         velocity.x -= acc * deltaTime;
@@ -149,7 +152,7 @@ static void ApplyGravity(const float deltaTime) {
     const unsigned char* buttons = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &buttonCount);
 
     bool jumpInput = false;
-    if (OnKeyHold(GLFW_KEY_SPACE) || buttons[1] == GLFW_PRESS) {
+    if (OnKeyHold(GLFW_KEY_SPACE) || (buttonCount > 0 && buttons[1] == GLFW_PRESS)) {
         jumpInput = true;
     }
 
