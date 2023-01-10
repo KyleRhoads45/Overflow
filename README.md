@@ -13,10 +13,10 @@ A platformer game made mostly from sratch.
 * Level Serialization
 
 ### Rendering
-
+Rendering for the game is hardware accelerated using OpenGL. In addition sprites are dynamically batched, resulting in fewer draw calls to improve GPU utilization.
 
 ### Physics
-The game features two main types of collision detection, axis aligned bounding box (AABB) and circle collision detection. AABB is used for collision detection between the player and the level tiles and while the circle collision detection is used to detect when the player enters a sawblade. Both types of collision detections use sweeps to ensure the player doesn't tunnel through objects when moving fast or if the game experiences frame drops. 
+The game features two main types of collision detection, axis aligned bounding box (AABB) and circle collision detection. AABB is used for collision detection and reconciliation between the player and the level. Circle collision detection is used to detect when the player enters a sawblade or reaches the end of the level. Both types of collision detections use sweeps to ensure the player doesn't tunnel through objects when moving fast or if the game experiences frame drops.
 
 ![OverflowPhysics](https://user-images.githubusercontent.com/52022661/211658031-075b87a5-7ff2-4e34-9f0b-3703778f8723.gif)
 
@@ -34,6 +34,6 @@ In order to make levels quickly I created an editor which allows the picking and
 * [Dear ImGui](https://github.com/ocornut/imgui) - Used for the level editor GUI
 
 ### About
-This game was my senior project at CSU Chico.
+This game was my senior project at CSU Chico and was intended to explore how game engines work.
 
 ![OverflowPoster](https://user-images.githubusercontent.com/52022661/211072131-e2b6691c-75e7-4e9d-adf2-45580cd26380.png)
