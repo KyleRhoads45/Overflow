@@ -26,6 +26,7 @@ A platformer game made mostly from sratch.
 * [glm](https://github.com/g-truc/glm) - OpenGL mathematics.
 * [entt](https://github.com/skypjack/entt) - Entity component system.
 * [stb_image](https://github.com/nothings/stb/blob/master/stb_image.h) - Used to load images.
+* [Dear ImGui](https://github.com/ocornut/imgui)
 
 ### About
 This game was my senior project at CSU Chico.
