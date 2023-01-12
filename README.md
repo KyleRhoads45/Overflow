@@ -1,5 +1,5 @@
 # Overflow
-A platformer game made mostly from sratch.
+A platformer game made mostly from scratch.
 
 ![OverflowGameplay](https://user-images.githubusercontent.com/52022661/211657669-d7cda915-9ac5-409e-90dd-4fce8ed49573.gif)
 
