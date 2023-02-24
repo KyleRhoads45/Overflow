@@ -1,5 +1,5 @@
 # Overflow
-A platformer game made mostly from scratch.
+A platformer game made in my own C++, data-oriented game engine.
 
 ![OverflowGameplay](https://user-images.githubusercontent.com/52022661/211657669-d7cda915-9ac5-409e-90dd-4fce8ed49573.gif)
 
