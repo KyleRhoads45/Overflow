@@ -1,5 +1,5 @@
 # Overflow
-I built a data-oriented game engine using C++, and made an example platformer game for testing purposes.
+I built a data-oriented game engine using C++ and made an example platformer game for testing purposes.
 
 ![OverflowGameplay](https://user-images.githubusercontent.com/52022661/211657669-d7cda915-9ac5-409e-90dd-4fce8ed49573.gif)
 
