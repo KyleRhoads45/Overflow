@@ -21,7 +21,7 @@ The game features two main types of collision detection, axis aligned bounding b
 ![OverflowPhysics](https://user-images.githubusercontent.com/52022661/211658031-075b87a5-7ff2-4e34-9f0b-3703778f8723.gif)
 
 ### Level Editor
-In order to make levels quickly I created an editor which allows the picking and placing of tiles into the level. When placing tiles you can specify their Z coordinate to make the player appear in front of or behind the tile. Tiles can also be overwritten with other tiles or erased entirely. Additionally, levels can also be created, saved, loaded, and deleted through the editor. Levels are saved into a text file that contain all the entities within that level and thier positions.  
+In order to make levels quickly I created an editor which allows the picking and placing of tiles into the level. When placing tiles you can specify their Z coordinate to make the player appear in front of or behind the tile. Tiles can also be overwritten with other tiles or erased entirely. Additionally, levels can also be created, saved, loaded, and deleted through the editor. Levels are saved into a text file that contain all the entities within that level and their positions.  
 
 ![OverflowEditor](https://user-images.githubusercontent.com/52022661/211658082-843de8c9-e6ae-4552-8c31-6a43d0748650.gif)
 
